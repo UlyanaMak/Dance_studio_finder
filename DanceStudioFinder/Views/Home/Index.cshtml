@@ -1,8 +1,148 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model DanceStudioFinder.Models.UserViewModel
+
+@{
+    ViewData["Title"] = "Главная страница сайта";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Поиск танцевальных студий</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+
+@section HeaderButtons {
+    <button id="enterButton" class="main-button" data-bs-toggle="modal" data-bs-target="#loginModal">
+        Вход
+    </button>
+    <button id="loginButton" class="main-button" data-bs-toggle="modal" data-bs-target="#registrationModal">
+        Регистрация
+    </button>
+}
+
+<body>
+    <!-- Модальное окно для входа -->
+    <div class="modal fade" id="loginModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Вход</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Форма для входа -->
+                    <form>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Login.LoginEmail" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="floatingInput" name="loginEmail" placeholder="Ваша эл.почта">
+                            <label for="floatingInput" style="color: #BABABA;">Ваша эл.почта</label>
+                            <span asp-validation-for="Login.LoginEmail" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Login.LoginPassword" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="floatingInput" name="loginPassword" placeholder="Пароль">
+                            <label for="floatingInput" style="color: #BABABA;">Пароль</label>
+                            <span asp-validation-for="Login.LoginPassword" class="text-danger"></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary enter-registration-button" name="enterButton">Войти</button>
+                        <div style="display: grid; place-items: center;">
+                            <a href="#" style="color: #BABABA;" id="openRegistrationModalLink">Ещё не зарегистрированы? Зарегистрироваться</a>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const openRegistrationModalLink = document.getElementById('openRegistrationModalLink');
+
+            openRegistrationModalLink.addEventListener('click', function (event) {
+                event.preventDefault(); // Предотвращаем переход по ссылке
+
+                // Получаем экземпляры модальных окон Bootstrap
+                const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
+                // Скрываем текущий модальный (входа)
+                if (loginModal) {
+                    loginModal.hide();
+                }
+                // Отображаем модальное окно регистрации
+                registrationModal.show();
+            });
+        });
+    </script>
+
+    <!-- Modal для регистрации -->
+    <div class="modal fade" id="registrationModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="registrationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registrationModalLabel">Регистрация</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Форма для регистрации -->
+                    <form>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Register.RegisterName" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="floatingInput" name="registrationName" placeholder="Имя">
+                            <label for="floatingInput" style="color: #BABABA;">Имя</label>
+                            <span asp-validation-for="Register.RegisterName" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Register.RegisterSurname" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="floatingInput" name="registrationSurname" placeholder="Фамилия">
+                            <label for="floatingInput" style="color: #BABABA;">Фамилия</label>
+                            <span asp-validation-for="Register.RegisterSurname" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Register.RegisterEmail" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="floatingInput" name="registrationEmail" placeholder="Ваша эл.почта">
+                            <label for="floatingInput" style="color: #BABABA;">Ваша эл.почта</label>
+                            <span asp-validation-for="Register.RegisterEmail" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Register.RegisterPassword" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="floatingInput" name="registrationPassword" placeholder="Пароль">
+                            <label for="floatingInput" style="color: #BABABA;">Пароль</label>
+                            <span asp-validation-for="Register.RegisterPassword" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Register.RegisterConfirmPassword" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="floatingInput" name="registrationConfirmPassword" placeholder="Пароль">
+                            <label for="floatingInput" style="color: #BABABA;">Повторите пароль</label>
+                            <span asp-validation-for="Register.RegisterConfirmPassword" class="text-danger"></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary enter-registration-button" name="registarionButton">Зарегистрироваться</button>
+                        <div style="display: grid; place-items: center;">
+                            <a href="#" style="color: #BABABA;" id="openLoginModalLink">Уже зарегистрированы? Войти</a>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const openLoginModalLink = document.getElementById('openLoginModalLink');
+
+            openLoginModalLink.addEventListener('click', function (event) {
+                event.preventDefault(); // Предотвращаем переход по ссылке
+
+                // Получаем экземпляры модальных окон Bootstrap
+                const registrationModal = bootstrap.Modal.getInstance(document.getElementById('registrationModal'));
+                const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                // Скрываем текущий модальный (входа)
+                if (registrationModal) {
+                    registrationModal.hide();
+                }
+                // Отображаем модальное окно регистрации
+                loginModal.show();
+            });
+        });
+    </script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+

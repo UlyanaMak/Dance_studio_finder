@@ -13,15 +13,15 @@ namespace DanceStudioFinder.Controllers
             _logger = logger;
         }
 
+
+        /// <summary>
+        /// Переход на главную страницу
+        /// </summary>
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
