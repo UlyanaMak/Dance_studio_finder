@@ -5,9 +5,11 @@ namespace DanceStudioFinder.Models
     public class RegisterViewModel
     {
         [Required(ErrorMessage = "Имя - обязательное поле для ввода")]
+        [RegularExpression(@"^[А-ЯЁ][а-яё]{0,14}$", ErrorMessage ="Имя должно быть введено на русском языке с заглавной буквы, длина не более 14 символов")]
         public string RegisterName { get; set; }
 
         [Required(ErrorMessage = "Фамилия - обязательное поле для ввода")]
+        [RegularExpression(@"^[А-ЯЁ][а-яё]{0,39}$", ErrorMessage = "Фамилия должна быть введена на русском языке с заглавной буквы, длина не более 40 символов")]
         public string RegisterSurname { get; set; }
 
         [Required(ErrorMessage = "Эл. почта - обязательное поле для ввода")]

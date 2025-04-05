@@ -7,7 +7,7 @@ using System.Security.Cryptography;
 
 namespace DanceStudioFinder.Models
 {
-    public class User 
+    public class User : IdentityUser
     {
         string name;
         string surname;
