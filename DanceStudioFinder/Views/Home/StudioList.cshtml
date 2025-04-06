@@ -1,0 +1,14 @@
+﻿@model List<DanceStudioFinder.Models.DanceStudio>
+
+@{
+    ViewData["Title"] = "Dance Studios";
+}
+
+<h2>Dance Studios</h2>
+
+<ul>
+    @foreach (var studio in Model)
+    {
+        <li>@studio.Name</li>
+    }
+</ul>
