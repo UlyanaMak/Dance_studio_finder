@@ -22,14 +22,35 @@
 }
 
 <body>
-    <h2>Dance Studios</h2>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Список студий -->
+            <div class="col-md-9">
+                <div id="studioList" class="studio-list-container">
+                    @if (Model.DanceStudios != null && Model.DanceStudios.Any())
+                    {
+                        @foreach (var studio in Model.DanceStudios)
+                        {
+                            await Html.RenderPartialAsync("_StudioItem", studio);
+                        }
+                    }
+                    else
+                    {
+                        <p>Нет доступных студий.</p>
+                    }
+                </div>
+            </div>
+            <!-- Фильтры для поиска (меньшая часть) -->
+            <div class="col-md-3">
+                <form id="filterForm">
+                    <button type="submit" class="btn btn-primary find-studio-button">Найти студии</button>
 
-    <ul>
-        @foreach (var studio in Model.DanceStudios)
-        {
-            <li>@studio.Name</li>
-        }
-    </ul>
+                    <!--Форма с фильтрами-->
+
+                </form>
+            </div>
+        </div>
+    </div>
     <!-- Модальное окно для входа -->
     <div class="modal fade" id="loginModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
         <div class="modal-dialog">

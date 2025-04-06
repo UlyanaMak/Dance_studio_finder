@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using DanceStudioFinder.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace DanceStudioFinder.Models;
+namespace DanceStudioFinder.Data;
 
-public partial class ApplicationDbContext : DbContext
+public partial class ApplicationDbContext: DbContext
 {
     public ApplicationDbContext()
     {
@@ -102,8 +103,8 @@ public partial class ApplicationDbContext : DbContext
             entity.HasKey(e => e.IdDay).HasName("week_days_pkey");
         });
 
-        OnModelCreatingPartial(modelBuilder);
+        //OnModelCreatingPartial(modelBuilder);
     }
 
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+    //partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

@@ -1,5 +1,7 @@
+using DanceStudioFinder.Data;
 using DanceStudioFinder.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using System.Diagnostics;
 
@@ -7,15 +9,26 @@ namespace DanceStudioFinder.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly string _connectionString;
-        public HomeController(IConfiguration configuration) 
+        private readonly ApplicationDbContext _context; 
+
+        public HomeController(ApplicationDbContext context)
         {
-            _connectionString = configuration.GetConnectionString("DefaultConnection");
+            _context = context;
         }
-        /*public IActionResult Index()
+
+        public IActionResult Index()
         {
-            return View();
-        }*/
+            var danceStudios = _context.DanceStudios
+                .Include(ds => ds.IdAddressNavigation) 
+                .ToList();
+
+            var viewModel = new UserViewModel
+            {
+                DanceStudios = danceStudios
+            };
+
+            return View(viewModel);
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Index(UserViewModel viewModel)
@@ -27,49 +40,6 @@ namespace DanceStudioFinder.Controllers
             }
             ViewData["ModelIsValid"] = false;
             return View();
-        }
-        public IActionResult Index()
-        {
-            var danceStudios = new List<DanceStudio>();
-            try
-            {
-                using(var connection = new NpgsqlConnection(_connectionString))
-                {
-                    connection.Open();
-                    using (var command = new NpgsqlCommand("select * from dance_studio", connection))
-                    using(var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            var studio = new DanceStudio
-                            {
-                                IdStudio = reader.GetInt32(0),
-                                Name = reader.GetString(1),
-                                IdAddress = reader.GetInt32(2),
-                                PhoneNumber = reader.GetString(3),
-                                ExtraPhoneNumber = reader.IsDBNull(4) ? null : reader.GetString(4),
-                                VkGroup = reader.IsDBNull(5) ? null : reader.GetString(5),
-                                Website = reader.IsDBNull(6) ? null : reader.GetString(6),
-                                Telegram = reader.IsDBNull(7) ? null : reader.GetString(7),
-                                IdAdmin = reader.GetInt32(8),
-                            };
-                            danceStudios.Add(studio);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-            var viewModel = new UserViewModel
-            {
-                // Присваиваем список DanceStudio свойству DanceStudios
-                DanceStudios = danceStudios
-            };
-
-            return View(viewModel);
-            //return View(danceStudios);
         }
     }
 }

@@ -1,0 +1,42 @@
+﻿@model DanceStudioFinder.Models.DanceStudio
+<div class="studio-item">
+    <div class="studio-header"></div> <!-- Розовая полоска -->
+    <div class="studio-content">
+        <h3>
+            <a href="@Url.Action("Details", "Studio", new { id = Model.IdStudio })">@Model.Name</a>
+        </h3>
+        @* Используем Address из навигационного свойства DanceStudio *@
+        <p class="address">
+            @if (Model.IdAddressNavigation != null)
+            {
+                @($"{Model.IdAddressNavigation.Entity}, {Model.IdAddressNavigation.Locality}, {Model.IdAddressNavigation.Street}")
+            }
+            else
+            {
+                <span>Адрес не указан</span>
+            }
+        </p>
+        <p>
+            Телефон: +7@Model.PhoneNumber
+        </p>
+        @if (!string.IsNullOrEmpty(Model.VkGroup))
+        {
+            <p>
+                Вконтакте: <a href="@Model.VkGroup" target="_blank">@Model.VkGroup</a>
+            </p>
+        }
+        @if (!string.IsNullOrEmpty(Model.Telegram))
+        {
+            <p>
+                Telegram: <a href="@Model.Telegram" target="_blank">@Model.Telegram</a>
+            </p>
+        }
+        @if (!string.IsNullOrEmpty(Model.Website))
+        {
+            <p>
+                Сайт: <a href="@Model.Website" target="_blank">@Model.Website</a>
+            </p>
+        }
+        <hr />  <!-- Разделитель между студиями -->
+    </div>
+</div>

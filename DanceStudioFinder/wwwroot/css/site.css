@@ -51,7 +51,22 @@ header {
 }
 
     .enter-registration-button:hover {
-        background-color: white; /*  или любой другой желаемый цвет заливки */
-        border: 2px solid #C8DE9D; /* или любой другой желаемый цвет границы */
-        color: black; /* ÷вет текста при наведении (если нужно) */
+        background-color: white;
+        border: 2px solid #C8DE9D; 
+        color: black; 
+    }
+
+.find-studio-button {
+    border: 2px solid #C8DE9D;
+    background-color: #F2FCC6;
+    color: black;
+    width: 100%;
+    font-family: "Times New Roman",sans-serif;
+    font-size: 25px;
+    margin-top: 20px;
+}
+    .find-studio-button:hover {
+        background-color: white; 
+        border: 2px solid #C8DE9D; 
+        color: black; 
     }
