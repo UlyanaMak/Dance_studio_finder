@@ -19,16 +19,31 @@ namespace DanceStudioFinder.Controllers
         public IActionResult Index()
         {
             var danceStudios = _context.DanceStudios
-                .Include(ds => ds.IdAddressNavigation) 
+                .Include(ds => ds.IdAddressNavigation) // загрузка адресов
+                .Include(ds => ds.Prices)              // загрузка цен
                 .ToList();
 
-            var viewModel = new UserViewModel
+            var viewModel = new UserViewModel  //созадние модели для главной страницы
             {
                 DanceStudios = danceStudios
             };
 
             return View(viewModel);
         }
+
+        /*public IActionResult StudioDetails(int id)
+        {
+            var studio = _context.DanceStudios.FirstOrDefault(s => s.IdStudio == id);
+
+            *//*//проверка, что студия найдена
+            if (studio == null)
+            {
+                return NotFound(); // Или обработайте ситуацию, когда студия не найдена (например, перенаправление на другую страницу)
+            }*//*
+
+            return View(studio); // передача объекта студии в View
+        }*/
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Index(UserViewModel viewModel)

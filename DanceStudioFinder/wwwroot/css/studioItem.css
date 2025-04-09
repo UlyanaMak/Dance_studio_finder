@@ -1,0 +1,23 @@
+﻿.price-item {
+    display: flex; /* Используем flexbox для размещения элементов в строку */
+    justify-content: space-between; /* Равномерно распределяем пространство между элементами */
+    align-items: center; /* Выравниваем элементы по вертикали по центру */
+    width: 100%; /* Растягиваем на всю ширину контейнера */
+    padding: 5px 0; /* Добавляем небольшие отступы сверху и снизу */
+    border-bottom: 1px dashed #ccc; /* Добавляем пунктирную линию снизу */
+}
+
+.price-description {
+    font-size: 13px;
+    text-align: left; /* Выравниваем описание по левому краю */
+}
+
+.price-value {
+    font-size: 13px;
+    text-align: right; /* Выравниваем цену по правому краю */
+}
+
+/* Убираем линию после последнего элемента (необязательно) */
+.price-item:last-child {
+    border-bottom: none;
+}

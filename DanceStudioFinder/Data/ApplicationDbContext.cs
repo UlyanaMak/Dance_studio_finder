@@ -5,34 +5,35 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DanceStudioFinder.Data;
 
-public partial class ApplicationDbContext: DbContext
+public class ApplicationDbContext: DbContext
 {
-    public ApplicationDbContext()
+    /*public ApplicationDbContext()
     {
-    }
+    }*/
+    public DbSet<Address> Addresses { get; set; }
 
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    public DbSet<Admin> Admins { get; set; }
+
+    public DbSet<AgeLimit> AgeLimits { get; set; }
+
+    public DbSet<DanceGroup> DanceGroups { get; set; }
+
+    public DbSet<DanceStudio> DanceStudios { get; set; }
+
+    public  DbSet<Price> Prices { get; set; }
+
+    public  DbSet<Schedule> Schedules { get; set; }
+
+    public  DbSet<Style> Styles { get; set; }
+
+    public  DbSet<WeekDay> WeekDays { get; set; }
+
+    public ApplicationDbContext(DbContextOptions options)
         : base(options)
     {
     }
 
-    public virtual DbSet<Address> Addresses { get; set; }
-
-    public virtual DbSet<Admin> Admins { get; set; }
-
-    public virtual DbSet<AgeLimit> AgeLimits { get; set; }
-
-    public virtual DbSet<DanceGroup> DanceGroups { get; set; }
-
-    public virtual DbSet<DanceStudio> DanceStudios { get; set; }
-
-    public virtual DbSet<Price> Prices { get; set; }
-
-    public virtual DbSet<Schedule> Schedules { get; set; }
-
-    public virtual DbSet<Style> Styles { get; set; }
-
-    public virtual DbSet<WeekDay> WeekDays { get; set; }
+    
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

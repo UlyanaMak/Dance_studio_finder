@@ -1,0 +1,17 @@
+﻿@model DanceStudioFinder.Models.DanceStudio
+@{
+    ViewData["Title"] = $"Данные студии '{Model.Name}'";
+}
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+
+@section HeaderButtons {
+    <input class="main-button" type="submit" onclick="location.href ='@Url.Action("Index", "Home")'" value="На главную страницу" />
+}
+
+
+

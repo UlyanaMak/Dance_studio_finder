@@ -1,42 +1,72 @@
 ﻿@model DanceStudioFinder.Models.DanceStudio
+
+<head>
+    <link rel="stylesheet" href="~/css/studioItem.css" asp-append-version="true" />
+</head>
+
+
 <div class="studio-item">
-    <div class="studio-header"></div> <!-- Розовая полоска -->
+    <div class="studio-header"></div> 
     <div class="studio-content">
         <h3>
-            <a href="@Url.Action("Details", "Studio", new { id = Model.IdStudio })">@Model.Name</a>
+            <a href="@Url.Action("Index", "StudioDetails", new { id = Model.IdStudio })">@Model.Name</a>
         </h3>
         @* Используем Address из навигационного свойства DanceStudio *@
         <p class="address">
             @if (Model.IdAddressNavigation != null)
             {
-                @($"{Model.IdAddressNavigation.Entity}, {Model.IdAddressNavigation.Locality}, {Model.IdAddressNavigation.Street}")
+                @($"{Model.IdAddressNavigation.Entity}, {Model.IdAddressNavigation.Locality}, ул. {Model.IdAddressNavigation.Street}, {Model.IdAddressNavigation.BuildingNumber}{Model.IdAddressNavigation.Letter}")
             }
             else
             {
                 <span>Адрес не указан</span>
             }
         </p>
-        <p>
-            Телефон: +7@Model.PhoneNumber
-        </p>
-        @if (!string.IsNullOrEmpty(Model.VkGroup))
-        {
-            <p>
-                Вконтакте: <a href="@Model.VkGroup" target="_blank">@Model.VkGroup</a>
-            </p>
+        @{
+            string number = "+7 (" + (Model.PhoneNumber.ToString()).Substring(0, 3) + ") " +(Model.PhoneNumber.ToString()).Substring(3, 3) + "-" + (Model.PhoneNumber.ToString()).Substring(6, 2) + "-" + (Model.PhoneNumber.ToString()).Substring(8, 2);
+            string extraNumber = "";
+            if (Model.ExtraPhoneNumber != null)
+            {
+                extraNumber = "+7 (" + (Model.ExtraPhoneNumber.ToString()).Substring(0, 3) + ") " + (Model.ExtraPhoneNumber.ToString()).Substring(3, 3) + "-" + (Model.ExtraPhoneNumber.ToString()).Substring(6, 2) + "-" + (Model.ExtraPhoneNumber.ToString()).Substring(8, 2);
+            }
         }
-        @if (!string.IsNullOrEmpty(Model.Telegram))
-        {
-            <p>
-                Telegram: <a href="@Model.Telegram" target="_blank">@Model.Telegram</a>
-            </p>
+        @{
+            if (extraNumber.Length == 0)
+            {
+                <p>
+                    Телефон: @number
+                </p>
+            }
+            else
+            {
+                <p>
+                    Телефон: @number | @extraNumber 
+                </p>
+            }
         }
-        @if (!string.IsNullOrEmpty(Model.Website))
-        {
-            <p>
-                Сайт: <a href="@Model.Website" target="_blank">@Model.Website</a>
-            </p>
+        
+        @{
+
+            if (Model != null && Model.Prices.Any())
+            {
+                foreach (var price in Model.Prices)
+                {
+                    <div class="price-item">
+                        <span class="price-description">@price.Description</span>
+                        @if (price.Price1 == 0)
+                        {
+                            <span class="price-value">бесплатно</span>
+                        }
+                        else
+                        {
+                            <span class="price-value">@price.Price1</span>
+                        }
+                    </div>
+                }
+            }
         }
-        <hr />  <!-- Разделитель между студиями -->
+
+        <!-- Разделитель между студиями - розовая полоса -->
+        <hr style="border: none; border-top: 3px solid #F7C9D4;"> 
     </div>
 </div>

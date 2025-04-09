@@ -24,8 +24,8 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-            <!-- Список студий -->
-            <div class="col-md-9">
+            <!-- Список всех студий, занесенных в систему -->
+            <div class="block-left">
                 <div id="studioList" class="studio-list-container">
                     @if (Model.DanceStudios != null && Model.DanceStudios.Any())
                     {
@@ -41,7 +41,7 @@
                 </div>
             </div>
             <!-- Фильтры для поиска (меньшая часть) -->
-            <div class="col-md-3">
+            <div class="block-right">
                 <form id="filterForm">
                     <button type="submit" class="btn btn-primary find-studio-button">Найти студии</button>
 
