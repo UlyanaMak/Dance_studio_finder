@@ -20,7 +20,7 @@ public partial class Price
     public int Price1 { get; set; }
 
     [Column("description")]
-    [StringLength(10)]
+    [StringLength(500)]
     public string Description { get; set; } = null!;
 
     [ForeignKey("IdStudio")]

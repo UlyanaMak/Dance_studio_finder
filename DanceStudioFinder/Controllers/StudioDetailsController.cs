@@ -6,7 +6,7 @@ namespace DanceStudioFinder.Controllers
 {
     public class StudioDetailsController : Controller
     {
-        private readonly ApplicationDbContext _context; // Замените ApplicationDbContext на ваш DbContext
+        private readonly ApplicationDbContext _context; 
 
         public StudioDetailsController(ApplicationDbContext context)
         {
@@ -16,14 +16,12 @@ namespace DanceStudioFinder.Controllers
         {
             var studio = _context.DanceStudios.FirstOrDefault(s => s.IdStudio == id);
 
-            // 2. Проверяем, что студия найдена
             if (studio == null)
             {
-                return NotFound(); // Или обработайте ситуацию, когда студия не найдена (например, перенаправление на другую страницу)
+                return NotFound(); 
             }
 
-            // 3. Передаем данные о студии в View
-            return View(studio); // Передаем объект студии в представление
+            return View(studio);
         }
     }
 }
