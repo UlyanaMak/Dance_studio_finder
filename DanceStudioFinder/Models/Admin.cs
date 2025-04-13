@@ -11,6 +11,7 @@ public partial class Admin
 {
     [Key]
     [Column("id_admin")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int IdAdmin { get; set; }
 
     [Column("name")]

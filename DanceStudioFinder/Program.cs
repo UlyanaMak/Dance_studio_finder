@@ -1,10 +1,19 @@
 using DanceStudioFinder.Data;
+using DanceStudioFinder.Models;
+using DanceStudioFinder.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 //Подключение DbContext для работы с БД
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IAdminService, AdminService>();
+
+builder.Services.AddScoped<IPasswordHasher<Admin>, PasswordHasher<Admin>>();
+
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

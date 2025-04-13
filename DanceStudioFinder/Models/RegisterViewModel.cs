@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using NuGet.Protocol.Plugins;
+using System.ComponentModel.DataAnnotations;
 
 namespace DanceStudioFinder.Models
 {
@@ -13,18 +14,28 @@ namespace DanceStudioFinder.Models
         public string RegisterSurname { get; set; }
 
         [Required(ErrorMessage = "Эл. почта - обязательное поле для ввода")]
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = "Некорректный формат эл. почты")]
         public string RegisterEmail { get; set; }
 
         [Required(ErrorMessage = "Пароль - обязательное поле для ввода")]
         [StringLength(15, MinimumLength = 5, ErrorMessage = "Пароль должен быть не длинне {1} символов и не короче {2} символов в длину")]
         [DataType(DataType.Password)]
-        [Compare("RegisterConfirmPassword", ErrorMessage = "Пароли не совпадают")]
         public string RegisterPassword { get; set; }
 
         [Required(ErrorMessage = "Повтор пароля - обязательное поле для ввода")]
         [DataType(DataType.Password)]
+        [Compare("RegisterPassword", ErrorMessage = "Пароли не совпадают")]
         public string RegisterConfirmPassword { get; set; }
 
+        public Admin GetUser()
+        {
+            Admin user = new()
+            {
+                Name = RegisterName,
+                Surname = RegisterSurname,
+                Email = RegisterEmail,
+            };
+            return user;
+        }
     }
 }

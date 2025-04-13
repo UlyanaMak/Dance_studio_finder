@@ -1,19 +1,25 @@
 using DanceStudioFinder.Data;
 using DanceStudioFinder.Models;
+using DanceStudioFinder.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace DanceStudioFinder.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ApplicationDbContext _context; 
-
-        public HomeController(ApplicationDbContext context)
+        private readonly ApplicationDbContext _context;
+        private readonly IAdminService _adminService;
+        public HomeController(ApplicationDbContext context, IAdminService adminService)
         {
             _context = context;
+            _adminService = adminService;
         }
 
         public IActionResult Index()
@@ -31,19 +37,6 @@ namespace DanceStudioFinder.Controllers
             return View(viewModel);
         }
 
-        /*public IActionResult StudioDetails(int id)
-        {
-            var studio = _context.DanceStudios.FirstOrDefault(s => s.IdStudio == id);
-
-            *//*//проверка, что студия найдена
-            if (studio == null)
-            {
-                return NotFound(); // Или обработайте ситуацию, когда студия не найдена (например, перенаправление на другую страницу)
-            }*//*
-
-            return View(studio); // передача объекта студии в View
-        }*/
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Index(UserViewModel viewModel)
@@ -56,5 +49,79 @@ namespace DanceStudioFinder.Controllers
             ViewData["ModelIsValid"] = false;
             return View();
         }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> RegisterAdmin(UserViewModel userModel)
+        {
+            //удаление ненужных моделей проверки
+            ModelState.Remove("Login");
+            ModelState.Remove("DanceStudios");
+
+            if (ModelState.IsValid)  //проверка данных на валидность
+            {
+                try
+                {
+                    Admin admin = new Admin  //создание администратора без пароля
+                    {
+                        Name = userModel.Register.RegisterName,
+                        Surname = userModel.Register.RegisterSurname,
+                        Email = userModel.Register.RegisterEmail
+                    };
+
+                    var result = await _adminService.RegisterAdmin(admin, userModel.Register.RegisterPassword);  //регистрация администратора (пароль хэшируется в AdminService)
+
+                    if (result)  //если успешно
+                    {
+                        return RedirectToAction("Index", "AddStudio");  //перенаправление на страницу добавления студии
+                    }
+                    else  //если пользователь с такой почтой существует  
+                    {
+                        ModelState.AddModelError("RegisterEmail", "Пользователь с данной эл. почтой уже зарегистрирован");  //сообщаем об этом пользователю и не даём зарегистрироваться
+                        return View(); //ИСПРАВИТЬ                              
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, "Произошла ошибка при регистрации. Обратитесь к администратору.");
+                }
+            }
+            return View();  //ИСПРАВИТЬ
+        }
+
+        /*[HttpPost]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (await _adminService.ValidateAdmin(model))
+                {
+                    var admin = await _adminService.GetAdminByEmail(model.LoginEmail);
+
+                    // Создаем Claims (утверждения) администратора
+                    var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, admin.Name),
+                    
+                    new Claim(ClaimTypes.Email, admin.Email)
+                        // Добавьте другие claims, если нужно
+                };
+
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme); Scheme, claimsPrincipal, authProperties);
+
+                    // Успешный вход, перенаправляем на главную страницу
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Неверный логин или пароль.");
+                    return PartialView("_LoginModal", model);  // Возвращаем модальное окно с ошибками
+                }
+            }
+
+            // Если модель не валидна, возвращаем частичное представление с ошибками
+            return PartialView("_LoginModal", model);
+        }*/
     }
 }
