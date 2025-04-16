@@ -50,10 +50,20 @@ namespace DanceStudioFinder.Controllers
             return View();
         }
 
+        [HttpGet]
+        public ActionResult Login()
+        {
+            return PartialView("_LoginModal");
+        }
 
+        [HttpGet]
+        public ActionResult Register()
+        {
+            return PartialView("_RegisterModal");
+        }
 
-        [HttpPost]
-        public async Task<IActionResult> RegisterAdmin(UserViewModel userModel)
+        /*[HttpPost]
+        public async Task<IActionResult> Register(UserViewModel userModel)
         {
             //удаление ненужных моделей проверки
             ModelState.Remove("Login");
@@ -76,10 +86,9 @@ namespace DanceStudioFinder.Controllers
                     {
                         return RedirectToAction("Index", "AddStudio");  //перенаправление на страницу добавления студии
                     }
-                    else  //если пользователь с такой почтой существует  
+                    else  // Если пользователь с такой почтой существует
                     {
-                        ModelState.AddModelError("RegisterEmail", "Пользователь с данной эл. почтой уже зарегистрирован");  //сообщаем об этом пользователю и не даём зарегистрироваться
-                        return View(); //ИСПРАВИТЬ                              
+                        ModelState.AddModelError("Register.RegisterEmail", "Пользователь с данной эл. почтой уже зарегистрирован");  // Сообщаем об этом пользователю
                     }
                 }
                 catch (Exception ex)
@@ -87,8 +96,11 @@ namespace DanceStudioFinder.Controllers
                     ModelState.AddModelError(string.Empty, "Произошла ошибка при регистрации. Обратитесь к администратору.");
                 }
             }
-            return View();  //ИСПРАВИТЬ
-        }
+
+            // Если есть ошибки (валидации или email уже существует), возвращаем Index View
+            // и передаем userModel, чтобы отобразить модальное окно и ошибки
+            return View("Index", userModel);
+        }*/
 
         /*[HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)

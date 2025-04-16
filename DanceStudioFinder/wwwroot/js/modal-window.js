@@ -51,6 +51,3 @@
         $.validator.unobtrusive.parse(form);
     });
 });
-
-
-
