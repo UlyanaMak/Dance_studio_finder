@@ -1,21 +1,26 @@
 ﻿@model DanceStudioFinder.Models.LoginViewModel
 
+<div class="modal-header">
+    <h5 class="modal-title" id="loginModalLabel">Вход</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
 
-
-
-<form id="loginForm" class="needs-validation" asp-controller="Home" asp-action="Login">
-    <div class="form-floating mb-3">
-        <input asp-for="LoginEmail" type="email" style="border: 1px solid #C8DE9D;" class="form-control" id="floatingInput" placeholder="Ваша эл.почта" name="LoginEmail">
-        <label for="floatingInput" style="color: #BABABA;">Ваша эл.почта</label>
-        <span asp-validation-for="LoginEmail" class="text-danger"></span>
-    </div>
-    <div class="form-floating mb-3">
-        <input asp-for="LoginPassword" type="password" style="border: 1px solid #C8DE9D;" class="form-control" id="floatingPassword" placeholder="Пароль" name="LoginPassword">
-        <label for="floatingPassword" style="color: #BABABA;">Пароль</label>
-        <span asp-validation-for="LoginPassword" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-primary enter-registration-button" name="loginButton">Войти</button>
-    <div style="display: grid; place-items: center;">
-        <a href="#" style="color: #BABABA;" id="openRegistrationModalLink">Ещё не зарегистрированы? Зарегистрироваться</a>
-    </div>
-</form>
+    <form id="loginForm" class="needs-validation" asp-controller="Home" asp-action="Login">
+        <div class="form-floating mb-3">
+            <input asp-for="LoginEmail" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="floatingInput" placeholder="Ваша эл.почта" name="LoginEmail">
+            <label for="floatingInput" style="color: #BABABA;">Ваша эл.почта</label>
+            <span asp-validation-for="LoginEmail" class="text-danger"></span>
+        </div>
+        <div class="form-floating mb-3">
+            <input asp-for="LoginPassword" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="floatingPassword" placeholder="Пароль" name="LoginPassword">
+            <label for="floatingPassword" style="color: #BABABA;">Пароль</label>
+            <span asp-validation-for="LoginPassword" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary enter-registration-button" name="loginButton">Войти</button>
+        <div style="display: grid; place-items: center;">
+            <a href="#" style="color: #BABABA;" id="openRegistrationModalLink">Ещё не зарегистрированы? Зарегистрироваться</a>
+        </div>
+        <script src="~/js/modal-window.js"></script>
+    </form>
+</div>

@@ -59,10 +59,10 @@ namespace DanceStudioFinder.Controllers
         [HttpGet]
         public ActionResult Register()
         {
-            return PartialView("_RegisterModal");
+            return PartialView("_RegisterModal", new RegisterViewModel());
         }
 
-        /*[HttpPost]
+        [HttpPost]
         public async Task<IActionResult> Register(UserViewModel userModel)
         {
             //удаление ненужных моделей проверки
@@ -99,8 +99,8 @@ namespace DanceStudioFinder.Controllers
 
             // Если есть ошибки (валидации или email уже существует), возвращаем Index View
             // и передаем userModel, чтобы отобразить модальное окно и ошибки
-            return View("Index", userModel);
-        }*/
+            return PartialView("_RegisterModal", userModel.Register);
+        }
 
         /*[HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)

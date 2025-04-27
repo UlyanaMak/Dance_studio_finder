@@ -51,19 +51,12 @@
             </div>
         </div>
     </div>
-    al
 
     <!-- Модальное окно для входа -->
     <div class="modal fade" id="loginModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="loginModalLabel">Вход</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!--Содержимое формы Вход загружается отдельно-->
-                </div>
+                
             </div>
         </div>
     </div>
@@ -72,15 +65,7 @@
     <div class="modal fade" id="registrationModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="registrationModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="registrationModalLabel">Регистрация</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!--Содержимое формы Регистрация загружается отдельно-->
-                </div>
-                <div class="modal-footer">
-                </div>
+                
             </div>
         </div>
     </div>
@@ -95,17 +80,13 @@
             var myModal = new bootstrap.Modal(document.getElementById(modalId));
             myModal.show();
         }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
         $(document).ready(function () {
             $('#openLoginModal').on('click', function () {
                 $.ajax({
                     url: '/Home/Login',
                     type: 'GET',
                     success: function (data) {
-                        $('#loginModal .modal-body').html(data);
+                        $('#loginModal .modal-content').html(data);
                         openModal('loginModal');
                     },
                     error: function (xhr, status, error) {
@@ -119,7 +100,7 @@
                     url: '/Home/Register',
                     type: 'GET',
                     success: function (data) {
-                        $('#registrationModal .modal-body').html(data);
+                        $('#registrationModal .modal-content').html(data);
                         openModal('registrationModal');
                     },
                     error: function (xhr, status, error) {
@@ -128,19 +109,6 @@
                 });
             });
         });
-
-        
-
-        window.onclick = function (event) {
-            let loginModal = document.getElementById('loginModal');
-            let registerModal = document.getElementById('registerModal');
-
-            if (event.target === loginModal) {
-                closeModal('loginModal');
-            } else if (event.target === registerModal) {
-                closeModal('registerModal');
-            }
-        }
     </script>
 </body>
 
