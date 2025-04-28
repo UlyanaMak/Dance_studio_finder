@@ -62,6 +62,12 @@ namespace DanceStudioFinder.Controllers
             return View();
         }
 
+
+        /// <summary>
+        /// Регистрация администратора
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(UserViewModel model)
@@ -71,9 +77,10 @@ namespace DanceStudioFinder.Controllers
             
             if (!ModelState.IsValid)  //если не пройдена валидация
             {
-                model.DanceStudios = _context.DanceStudios.ToList();
-                return View("Index", model);
+                model.DanceStudios = _context.DanceStudios.ToList();  //список студий
+                return View("Index", model);  //на главную страницу с модальным окном
             }
+            //если пройдена валидация
             try
             {
                 Admin admin = new Admin  //создание администратора без пароля
@@ -87,63 +94,52 @@ namespace DanceStudioFinder.Controllers
 
                 if (result)  //если успешно
                 {
-                    return RedirectToAction("Index", "AddStudio");  //перенаправление на страницу добавления студии
+                    return RedirectToAction("Index", "AddStudio");  //перенаправление на страницу студии, привязанной к администратору
                 }
-                else  // Если пользователь с такой почтой существует
+                else  //если администратор с такой почтой существует
                 {
-                    ModelState.AddModelError("Register.RegisterEmail", "Пользователь с данной эл. почтой уже зарегистрирован");  // Сообщаем об этом пользователю
+                    ModelState.AddModelError("Register.RegisterEmail", "Пользователь с данной эл. почтой уже зарегистрирован. Войдите в систему.");  //сообщение
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex)  //если произошла ошибка
             {
-                ModelState.AddModelError(string.Empty, "Произошла ошибка при регистрации. Обратитесь к администратору.");
+                ModelState.AddModelError(string.Empty, "Произошла ошибка при регистрации. Обратитесь к владельцу сайта.");
             }
-            model.DanceStudios = _context.DanceStudios.ToList();
-            return View("Index", model);
+            model.DanceStudios = _context.DanceStudios.ToList();  //список всех студий в системе
+            return View("Index", model);  //остаётся на главной
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(UserViewModel model)
         {
+            ModelState.Remove("Register");  //удалить проверку регистрации
+            ModelState.Remove("DanceStudios");  //удалить проверку танцевальных студий
+
             if (!ModelState.IsValid)
             {
-                var viewModel = new UserViewModel
-                {
-                    DanceStudios = _context.DanceStudios.ToList(),
-                    Login = model
-                };
-                return View("Index", viewModel);
+                model.DanceStudios = _context.DanceStudios.ToList();  //список студий
+                return View("Index", model);
             }
-            /*if (ModelState.IsValid)
+            var result = await _adminService.ValidateAdmin(model.Login);
+            var admin = await _adminService.GetAdminByEmail(model.Login.LoginEmail);
+
+            if (admin == null)
             {
-                if (await _adminService.ValidateAdmin(model))
-                {
-                    var admin = await _adminService.GetAdminByEmail(model.LoginEmail);
-
-                    // Создаем Claims (утверждения) администратора
-                    var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, admin.Name),
-
-                    new Claim(ClaimTypes.Email, admin.Email)
-                        // Добавьте другие claims, если нужно
-                };
-
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme); Scheme, claimsPrincipal, authProperties);
-
-                    // Успешный вход, перенаправляем на главную страницу
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Неверный логин или пароль.");
-                    return PartialView("_LoginModal", model);  // Возвращаем модальное окно с ошибками
-                }
-            }*/
+                ModelState.AddModelError("Login.LoginEmail", "Пользователь с данной эл. почтой ещё не зарегистрирован.");
+            }
+            else if (result)
+            {
+                return RedirectToAction("Index", "AddStudio");
+            }
+            else
+            {
+                ModelState.AddModelError("Login.LoginPassword", "Пароль некорректен.");
+            }
 
             // Если модель не валидна, возвращаем частичное представление с ошибками
-            return PartialView("_LoginModal", model);
+            model.DanceStudios = _context.DanceStudios.ToList();  //список всех студий в системе
+            return View("Index", model);  //остаётся на главной
         }
     }
 }

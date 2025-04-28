@@ -53,24 +53,23 @@
     </div>
 
     <!-- Модальное окно для входа -->
-    <div class="modal fade" id="loginModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+    <div class="modal fade" id="loginModal" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="loginModalLabel">Вход</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-
-                    <form id="loginForm" asp-controller="Home" asp-action="Login" method="post">
+                    <form id="loginForm" class="needs-validation" novalidate asp-controller="Home" asp-action="Login" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        <div class="form-floating mb-3">
-                            <input asp-for="Login.LoginEmail" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="floatingInput" placeholder="Ваша эл.почта" name="LoginEmail">
+                        <div class="form-floating mb-3 validation">
+                            <input asp-for="Login.LoginEmail" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="floatingInput" placeholder="Ваша эл.почта">
                             <label for="floatingInput" style="color: #BABABA;">Ваша эл.почта</label>
                             <span asp-validation-for="Login.LoginEmail" class="text-danger"></span>
                         </div>
-                        <div class="form-floating mb-3">
-                            <input asp-for="Login.LoginPassword" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="floatingPassword" placeholder="Пароль" name="LoginPassword">
+                        <div class="form-floating mb-3 validation">
+                            <input asp-for="Login.LoginPassword" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="floatingPassword" placeholder="Пароль">
                             <label for="floatingPassword" style="color: #BABABA;">Пароль</label>
                             <span asp-validation-for="Login.LoginPassword" class="text-danger"></span>
                         </div>
@@ -81,7 +80,6 @@
                         <script src="~/js/modal-window.js"></script>
                     </form>
                 </div>
-                @* @await Html.PartialAsync("_LoginModal", Model.Login ?? new LoginViewModel()) *@
             </div>
         </div>
     </div>
@@ -129,7 +127,6 @@
                         <script src="~/js/modal-window.js"></script>
                     </form>
                 </div>
-                @* @await Html.PartialAsync("_RegisterModal", Model.Register ?? new RegisterViewModel()) *@
             </div>
         </div>
     </div>
@@ -137,8 +134,6 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
-    @* <script src="~/js/modal-window.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>  *@
 </body>
 @section Scripts {
     <script>
@@ -195,6 +190,15 @@
             document.addEventListener('DOMContentLoaded', function () {
                 const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
                 registrationModal.show();
+            });
+        </script>
+    }
+    @if (!ViewData.ModelState.IsValid && Model?.Login != null)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                loginModal.show();
             });
         </script>
     }
