@@ -53,59 +53,69 @@ namespace DanceStudioFinder.Controllers
         [HttpGet]
         public ActionResult Login()
         {
-            return PartialView("_LoginModal");
+            return View();
         }
 
         [HttpGet]
         public ActionResult Register()
         {
-            return PartialView("_RegisterModal", new RegisterViewModel());
+            return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(UserViewModel userModel)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(UserViewModel model)
         {
-            //удаление ненужных моделей проверки
-            ModelState.Remove("Login");
-            ModelState.Remove("DanceStudios");
-
-            if (ModelState.IsValid)  //проверка данных на валидность
+            ModelState.Remove("Login");  //удалить проверку входа
+            ModelState.Remove("DanceStudios");  //удалить проверку танцевальных студий
+            
+            if (!ModelState.IsValid)  //если не пройдена валидация
             {
-                try
+                model.DanceStudios = _context.DanceStudios.ToList();
+                return View("Index", model);
+            }
+            try
+            {
+                Admin admin = new Admin  //создание администратора без пароля
                 {
-                    Admin admin = new Admin  //создание администратора без пароля
-                    {
-                        Name = userModel.Register.RegisterName,
-                        Surname = userModel.Register.RegisterSurname,
-                        Email = userModel.Register.RegisterEmail
-                    };
+                    Name = model.Register.RegisterName,
+                    Surname = model.Register.RegisterSurname,
+                    Email = model.Register.RegisterEmail
+                };
 
-                    var result = await _adminService.RegisterAdmin(admin, userModel.Register.RegisterPassword);  //регистрация администратора (пароль хэшируется в AdminService)
+                var result = await _adminService.RegisterAdmin(admin, model.Register.RegisterPassword);  //регистрация администратора (пароль хэшируется в AdminService)
 
-                    if (result)  //если успешно
-                    {
-                        return RedirectToAction("Index", "AddStudio");  //перенаправление на страницу добавления студии
-                    }
-                    else  // Если пользователь с такой почтой существует
-                    {
-                        ModelState.AddModelError("Register.RegisterEmail", "Пользователь с данной эл. почтой уже зарегистрирован");  // Сообщаем об этом пользователю
-                    }
+                if (result)  //если успешно
+                {
+                    return RedirectToAction("Index", "AddStudio");  //перенаправление на страницу добавления студии
                 }
-                catch (Exception ex)
+                else  // Если пользователь с такой почтой существует
                 {
-                    ModelState.AddModelError(string.Empty, "Произошла ошибка при регистрации. Обратитесь к администратору.");
+                    ModelState.AddModelError("Register.RegisterEmail", "Пользователь с данной эл. почтой уже зарегистрирован");  // Сообщаем об этом пользователю
                 }
             }
-
-            // Если есть ошибки (валидации или email уже существует), возвращаем Index View
-            // и передаем userModel, чтобы отобразить модальное окно и ошибки
-            return PartialView("_RegisterModal", userModel.Register);
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Произошла ошибка при регистрации. Обратитесь к администратору.");
+            }
+            model.DanceStudios = _context.DanceStudios.ToList();
+            return View("Index", model);
         }
 
-        /*[HttpPost]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new UserViewModel
+                {
+                    DanceStudios = _context.DanceStudios.ToList(),
+                    Login = model
+                };
+                return View("Index", viewModel);
+            }
+            /*if (ModelState.IsValid)
             {
                 if (await _adminService.ValidateAdmin(model))
                 {
@@ -115,7 +125,7 @@ namespace DanceStudioFinder.Controllers
                     var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, admin.Name),
-                    
+
                     new Claim(ClaimTypes.Email, admin.Email)
                         // Добавьте другие claims, если нужно
                 };
@@ -130,10 +140,10 @@ namespace DanceStudioFinder.Controllers
                     ModelState.AddModelError(string.Empty, "Неверный логин или пароль.");
                     return PartialView("_LoginModal", model);  // Возвращаем модальное окно с ошибками
                 }
-            }
+            }*/
 
             // Если модель не валидна, возвращаем частичное представление с ошибками
             return PartialView("_LoginModal", model);
-        }*/
+        }
     }
 }

@@ -13,10 +13,10 @@
 </head>
 
 @section HeaderButtons {
-    <button type="button" id="openLoginModal" class="main-button">
+    <button type="button" id="openLoginModal" class="main-button" data-bs-toggle="modal" data-bs-target="#loginModal">
         Вход
     </button>
-    <button type="button" id="openRegisterModal" class="main-button">
+    <button type="button" id="openRegisterModal" class="main-button" data-bs-toggle="modal" data-bs-target="#registrationModal">
         Регистрация
     </button>
 }
@@ -56,16 +56,80 @@
     <div class="modal fade" id="loginModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Вход</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <form id="loginForm" asp-controller="Home" asp-action="Login" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Login.LoginEmail" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="floatingInput" placeholder="Ваша эл.почта" name="LoginEmail">
+                            <label for="floatingInput" style="color: #BABABA;">Ваша эл.почта</label>
+                            <span asp-validation-for="Login.LoginEmail" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Login.LoginPassword" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="floatingPassword" placeholder="Пароль" name="LoginPassword">
+                            <label for="floatingPassword" style="color: #BABABA;">Пароль</label>
+                            <span asp-validation-for="Login.LoginPassword" class="text-danger"></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary enter-registration-button" name="loginButton">Войти</button>
+                        <div style="display: grid; place-items: center;">
+                            <a href="#" style="color: #BABABA;" id="openRegistrationModalLink">Ещё не зарегистрированы? Зарегистрироваться</a>
+                        </div>
+                        <script src="~/js/modal-window.js"></script>
+                    </form>
+                </div>
+                @* @await Html.PartialAsync("_LoginModal", Model.Login ?? new LoginViewModel()) *@
             </div>
         </div>
     </div>
 
     <!-- Modal для регистрации -->
-    <div class="modal fade" id="registrationModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="registrationModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+    <div class="modal fade" id="registrationModal" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="registrationModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
-                
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registrationModalLabel">Регистрация</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="registerForm" class="needs-validation" novalidate asp-controller="Home" asp-action="Register" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Register.RegisterName" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="floatingInput" placeholder="Имя">
+                            <label for="floatingInput" style="color: #BABABA;">Имя</label>
+                            <span asp-validation-for="Register.RegisterName" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3 validation">
+                            <input asp-for="Register.RegisterSurname" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="floatingInput" placeholder="Фамилия">
+                            <label for="floatingInput" style="color: #BABABA;">Фамилия</label>
+                            <span asp-validation-for="Register.RegisterSurname" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3 validation">
+                            <input asp-for="Register.RegisterEmail" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="floatingInput" placeholder="Ваша эл.почта">
+                            <label for="floatingInput" style="color: #BABABA;">Ваша эл.почта</label>
+                            <span asp-validation-for="Register.RegisterEmail" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3 validation">
+                            <input asp-for="Register.RegisterPassword" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="floatingInput" placeholder="Пароль">
+                            <label for="floatingInput" style="color: #BABABA;">Пароль</label>
+                            <span asp-validation-for="Register.RegisterPassword" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3 validation">
+                            <input asp-for="Register.RegisterConfirmPassword" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="floatingInput" placeholder="Пароль">
+                            <label for="floatingInput" style="color: #BABABA;">Повторите пароль</label>
+                            <span asp-validation-for="Register.RegisterConfirmPassword" class="text-danger"></span>
+                        </div>
+                        <button type="submit" value="Зарегистрироваться" class="btn btn-primary enter-registration-button">Зарегистрироваться</button>
+                        <div style="display: grid; place-items: center;">
+                            <a href="#" style="color: #BABABA;" id="openLoginModalLink">Уже зарегистрированы? Войти</a>
+                        </div>
+                        <script src="~/js/modal-window.js"></script>
+                    </form>
+                </div>
+                @* @await Html.PartialAsync("_RegisterModal", Model.Register ?? new RegisterViewModel()) *@
             </div>
         </div>
     </div>
@@ -73,44 +137,68 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
-    <script src="~/js/modal-window.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+    @* <script src="~/js/modal-window.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>  *@
+</body>
+@section Scripts {
     <script>
-        function openModal(modalId) {
-            var myModal = new bootstrap.Modal(document.getElementById(modalId));
-            myModal.show();
-        }
-        $(document).ready(function () {
-            $('#openLoginModal').on('click', function () {
-                $.ajax({
-                    url: '/Home/Login',
-                    type: 'GET',
-                    success: function (data) {
-                        $('#loginModal .modal-content').html(data);
-                        openModal('loginModal');
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Ошибка при загрузке формы входа: " + error);
-                    }
-                });
+        document.addEventListener('DOMContentLoaded', function () {
+            const openRegistrationModalLink = document.getElementById('openRegistrationModalLink');
+            const openLoginModalLink = document.getElementById('openLoginModalLink');
+
+            openRegistrationModalLink?.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
+                if (loginModal) loginModal.hide();
+                registrationModal.show();
             });
 
-            $('#openRegisterModal').on('click', function () {
-                $.ajax({
-                    url: '/Home/Register',
-                    type: 'GET',
-                    success: function (data) {
-                        $('#registrationModal .modal-content').html(data);
-                        openModal('registrationModal');
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Ошибка при загрузке формы регистрации: " + error);
-                    }
-                });
+            openLoginModalLink?.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                const registrationModal = bootstrap.Modal.getInstance(document.getElementById('registrationModal'));
+                const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                if (registrationModal) registrationModal.hide();
+                loginModal.show();
+            });
+
+            // Очистка формы при закрытии
+            $('#loginModal').on('hidden.bs.modal', function () {
+                const form = $(this).find('form');
+                form[0].reset();
+                $(this).find('.text-danger').text('');
+                $(this).find('.is-invalid').removeClass('is-invalid');
+                form.removeData('validator');
+                form.removeData('unobtrusiveValidation');
+                $.validator.unobtrusive.parse(form);
+            });
+
+            $('#registrationModal').on('hidden.bs.modal', function () {
+                const form = $(this).find('form');
+                form[0].reset();
+                $(this).find('.text-danger').text('');
+                $(this).find('.is-invalid').removeClass('is-invalid');
+                form.removeData('validator');
+                form.removeData('unobtrusiveValidation');
+                $.validator.unobtrusive.parse(form);
             });
         });
+
     </script>
-</body>
+
+    <!-- Открытие модального окна регистрации при ошибках -->
+    @if (!ViewData.ModelState.IsValid && Model?.Register != null)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
+                registrationModal.show();
+            });
+        </script>
+    }
+}
 
 
 
