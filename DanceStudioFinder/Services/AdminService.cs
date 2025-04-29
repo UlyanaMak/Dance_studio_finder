@@ -7,7 +7,7 @@ namespace DanceStudioFinder.Services
 {
     public class AdminService: IAdminService
     {
-        private readonly ApplicationDbContext _context;  // Замените YourDbContext на ваш DbContext
+        private readonly ApplicationDbContext _context;
         private readonly IPasswordHasher<Admin> _passwordHasher;
 
         public AdminService(ApplicationDbContext context, IPasswordHasher<Admin> passwordHasher)
@@ -36,31 +36,38 @@ namespace DanceStudioFinder.Services
             return true;                        //успешное завершение регистрации
         }
 
+
+        /// <summary>
+        /// Извлечение администратора по е-майл
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
         public async Task<Admin?> GetAdminByEmail(string email)
         {
             return await _context.Admins.FirstOrDefaultAsync(a => a.Email == email);
         }
 
-        /*public bool IsAdminConfigured()
-        {
-            return _context.Admins.Any(); // Проверка на наличие хотя бы одного администратора
-        }*/
 
+        /// <summary>
+        /// Валидация администратора
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public async Task<bool> ValidateAdmin(LoginViewModel model)
         {
-            // 1. Получение администратора по почте
+            //получение администратора по почте
             var admin = await GetAdminByEmail(model.LoginEmail);
 
-            // 2. Проверка существования администратора
+            //проверка существования администратора
             if (admin == null)
             {
-                return false; // Администратор не найден
+                return false; //администратор не найден
             }
 
-            // 3. Проверка пароля
+            //проверка пароля
             var result = _passwordHasher.VerifyHashedPassword(admin, admin.Password, model.LoginPassword);
 
-            // 4. Возврат результата проверки
+            //возврат результата проверки
             return result == PasswordVerificationResult.Success;
         }
     }

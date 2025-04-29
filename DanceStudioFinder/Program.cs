@@ -12,7 +12,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql
 builder.Services.AddScoped<IAdminService, AdminService>();
 
 builder.Services.AddScoped<IPasswordHasher<Admin>, PasswordHasher<Admin>>();
-
+builder.Services.AddScoped<AdminStudioService>();
 
 
 // Add services to the container.

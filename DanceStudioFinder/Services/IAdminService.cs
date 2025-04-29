@@ -17,7 +17,6 @@ namespace DanceStudioFinder.Services
         /// <param name="email"></param>
         /// <returns></returns>
         Task<Admin?> GetAdminByEmail(string email);
-        //bool IsAdminConfigured();
 
 
         /// <summary>

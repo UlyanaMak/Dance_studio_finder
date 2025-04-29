@@ -1,0 +1,25 @@
+﻿@model DanceStudioFinder.Models.Admin
+
+@{
+    ViewData["Title"] = "Информация о студии";
+}
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Поиск танцевальных студий</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/adminStudio.css" asp-append-version="true" />
+</head>
+
+@section AdminInfo{
+    @($"Администратор: {Model.Name} {Model.Surname}")
+    <button type="button" id="deleteAdmin" class="main-button">
+        Удалить администратора
+    </button>
+}
+@section HeaderButtons {
+    <button type="button" id="closeAdmin" class="main-button">
+        Выйти
+    </button>
+}

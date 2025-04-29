@@ -4,7 +4,7 @@
 }
 
 body {
-    background: white;
+    background: white;  /*цвет фона*/
 }
 
 header {
@@ -13,18 +13,20 @@ header {
     width: 100%;
     align-items: center;
     display: flex;
+    justify-content: space-between; /* Распределяет пространство между элементами */
+    padding: 0 20px; /* Добавляем отступы слева и справа */
 }
 
     header .logo {
         font-weight: 600;
         font-size: 25px;
-        margin-left: 20px;
         font-family: "Times New Roman",sans-serif;
+        margin-right: 20px;
     }
 
     header nav {
-        position: absolute;
-        right: 0;
+        display: flex;
+
     }
 
 
@@ -41,6 +43,12 @@ header {
         border-radius: 0px;
         cursor: pointer;
         font-family: "Times New Roman",sans-serif;
+    }
+    header .admin_info {
+        font-family: "Times New Roman", serif; /* Шрифт Times New Roman */
+        font-weight: normal; /* Убираем жирность, делаем текст обычным */
+        font-size: 17px;
+        margin-right: auto; /* Прижимает nav к правому краю */
     }
 
 .enter-registration-button {

@@ -94,7 +94,7 @@ namespace DanceStudioFinder.Controllers
 
                 if (result)  //если успешно
                 {
-                    return RedirectToAction("Index", "AddStudio");  //перенаправление на страницу студии, привязанной к администратору
+                    return RedirectToAction("Index", "AdminStudio", new { id = admin.IdAdmin });  //перенаправление на страницу студии, привязанной к администратору
                 }
                 else  //если администратор с такой почтой существует
                 {
@@ -130,7 +130,7 @@ namespace DanceStudioFinder.Controllers
             }
             else if (result)
             {
-                return RedirectToAction("Index", "AddStudio");
+                return RedirectToAction("Index", "AdminStudio", new { adminId = admin.IdAdmin });  //перед '=' ДОЛЖНО совпадать с параметром в AdminStudioController Index
             }
             else
             {

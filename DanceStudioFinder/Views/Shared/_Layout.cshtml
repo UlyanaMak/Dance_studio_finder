@@ -9,6 +9,9 @@
 <body>
     <header>
         <span class="logo">Dance Studio Finder</span>
+        <span class="admin_info">
+            @RenderSection("AdminInfo", required: false)
+        </span>
         <nav>
             @RenderSection("HeaderButtons", required: false)  <!--Кнопки в шапке страницы-->
             @RenderSection("Scripts", required: false)
