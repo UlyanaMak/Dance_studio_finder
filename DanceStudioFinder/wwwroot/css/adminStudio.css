@@ -1,1 +1,13 @@
-﻿
+﻿.field-title {
+    font-family: "Times New Roman",sans-serif;
+    font-size: 25px;
+    margin-left: 20px;
+    font-weight: bold;
+}
+
+.btn-outline-primary {
+    border: 1px solid #F7C9D4;
+    color: #F7C9D4;
+}
+
+

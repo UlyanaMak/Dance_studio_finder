@@ -12,16 +12,22 @@ namespace DanceStudioFinder.Controllers
         {
             _context = context;
         }
-        public IActionResult Index(int id)
+
+        /// <summary>
+        /// Вывод страницы с информацией о студии
+        /// </summary>
+        /// <param name="studioId"></param>
+        /// <returns></returns>
+        public IActionResult Index(int studioId)
         {
-            var studio = _context.DanceStudios.FirstOrDefault(s => s.IdStudio == id);
+            var studio = _context.DanceStudios.FirstOrDefault(s => s.IdStudio == studioId);  //извлечение студии по id
 
             if (studio == null)
             {
                 return NotFound(); 
             }
 
-            return View(studio);
+            return View(studio);  //возврат представления с объектом
         }
     }
 }

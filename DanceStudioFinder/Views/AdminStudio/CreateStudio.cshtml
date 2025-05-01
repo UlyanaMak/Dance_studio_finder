@@ -1,0 +1,223 @@
+﻿@model DanceStudioFinder.Models.AdminStudioViewModel
+
+@{
+    ViewData["Title"] = "Информация о студии";
+}
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Поиск танцевальных студий</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/adminStudio.css" asp-append-version="true" />
+</head>
+
+@section AdminInfo{
+    @($"Администратор: {Model.Admin.Name} {Model.Admin.Surname}")
+    <button type="button" id="deleteAdmin" class="main-button">
+        Удалить администратора
+    </button>
+}
+@section HeaderButtons {
+    <button type="button" id="ssaveChanges" class="main-button">
+        Сохранить
+    </button>
+    <button type="button" id="closeAdmin" class="main-button">
+        Выйти
+    </button>
+}
+<body>
+    <div class="container-fluid px-3">
+
+        <!-- Название студии-->
+        <div class="form-floating mb-3 mt-3 validation" style="width: 700px;">
+            <input asp-for="DanceStudio.Name" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="studioName" placeholder="Название студии">
+            <label for="floatingInput" style="color: #BABABA;">Название студии</label>
+            <span asp-validation-for="DanceStudio.Name" class="text-danger"></span>
+        </div>
+
+        <!-- Заполнение адреса студии -->
+        <span class="field-title">Адрес</span>
+        <div class="row g-3 align-items-center">
+            <div class="col">
+                <!-- Поле 1 -->
+                <div class="form-floating mb-3 validation">
+                    <input asp-for="Address.Entity" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="entity" placeholder="Субъект РФ">
+                    <label for="floatingInput" style="color: #BABABA;">Субъект РФ</label>
+                    <span asp-validation-for="Address.Entity" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col">
+                <!-- Поле 2 -->
+                <div class="form-floating mb-3 validation">
+                    <input asp-for="Address.Locality" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="locality" placeholder="Населённый пункт">
+                    <label for="floatingInput" style="color: #BABABA;">Населённый пункт (город/посёлок)</label>
+                    <span asp-validation-for="Address.Locality" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col">
+                <!-- Поле 3 -->
+                <div class="form-floating mb-3 validation">
+                    <input asp-for="Address.Street" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="street" placeholder="Улица">
+                    <label for="floatingInput" style="color: #BABABA;">Улица</label>
+                    <span asp-validation-for="Address.Street" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col">
+                <!-- Поле 4 -->
+                <div class="form-floating mb-3 validation">
+                    <input asp-for="Address.BuildingNumber" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="buildingNumber" placeholder="Номер здания">
+                    <label for="floatingInput" style="color: #BABABA;">Номер здания</label>
+                    <span asp-validation-for="Address.BuildingNumber" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col">
+                <!-- Поле 5 -->
+                <div class="form-floating mb-3 validation">
+                    <input asp-for="Address.Letter" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="buildingLetter" placeholder="Литера здания">
+                    <label for="floatingInput" style="color: #BABABA;">Литера здания</label>
+                    <span asp-validation-for="Address.Letter" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <!--Заполнение контакнтых данных-->
+        <span class="field-title">Контактные данные</span>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <!-- Поле 1 -->
+                <div class="form-floating mb-3 validation">
+                    <input asp-for="DanceStudio.PhoneNumber" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="phoneNumber" placeholder="Телефон">
+                    <label for="floatingInput" style="color: #BABABA;">Телефон</label>
+                    <span asp-validation-for="DanceStudio.PhoneNumber" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <!-- Поле 2 -->
+                <div class="form-floating mb-3 validation">
+                    <input asp-for="DanceStudio.ExtraPhoneNumber" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="extraPhoneNumber" placeholder="Доп. телефон">
+                    <label for="floatingInput" style="color: #BABABA;">Доп. телефон</label>
+                    <span asp-validation-for="DanceStudio.ExtraPhoneNumber" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <!-- Поле 1 -->
+                <div class="form-floating mb-3 validation">
+                    <input asp-for="DanceStudio.Website" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="siteLink" placeholder="Ссылка на сайт">
+                    <label for="floatingInput" style="color: #BABABA;">Ссылка на сайт</label>
+                    <span asp-validation-for="DanceStudio.Website" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <!-- Поле 2 -->
+                <div class="form-floating mb-3 validation">
+                    <input asp-for="DanceStudio.VkGroup" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="VKlink" placeholder="Ссылка на ВКонтакте">
+                    <label for="floatingInput" style="color: #BABABA;">Ссылка на ВКонтакте</label>
+                    <span asp-validation-for="DanceStudio.VkGroup" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <!-- Поле 3 -->
+                <div class="form-floating mb-3 validation">
+                    <input asp-for="DanceStudio.Telegram" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="TGlink" placeholder="Ссылка на Telegram">
+                    <label for="floatingInput" style="color: #BABABA;">Ссылка на Telegram</label>
+                    <span asp-validation-for="DanceStudio.Telegram" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <!--Заполнение (и добавление) цен-->
+        <span class="field-title">Цены</span>
+        <div id="price-container" class="mb-3">
+            <!-- Первоначальное поле -->
+            <div class="row g-2 align-items-center mb-2" id="priceRow0">
+                <div class="col-4">
+                    <div class="form-floating mb-3 validation">
+                        <input asp-for="Price.Price1" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="priceInput0" placeholder="Цена">
+                        <label for="priceInput0" style="color: #BABABA;">Цена</label>
+                        <span asp-validation-for="Price.Price1" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-floating mb-3 validation">
+                        <input asp-for="Price.Description" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="priceDescription0" placeholder="Описание">
+                        <label for="priceDescription0" style="color: #BABABA;">Описание</label>
+                        <span asp-validation-for="Price.Description" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--У 1 поля нет кнопки "Удалить" д.б. введена хотя бы одна цена-->
+            </div>
+        </div>
+        <!-- Кнопка добавления новых полей -->
+        <button type="button" class="btn btn-outline-primary" onclick="addPriceField()">+</button>
+
+        <!--Заполнение (и добавление) групп-->
+        <div class="field-title">Группы</div>
+        <!--ДОПИЛИТЬ ГРУППЫ-->
+
+    </div>
+    
+</body>
+
+<!--Добавление полей для цен танцевальной студии-->
+<script>
+    let priceIndex = 1;
+
+    function addPriceField() {
+        const container = document.getElementById("price-container");
+
+        const row = document.createElement("div");
+        row.className = "row g-2 align-items-center mb-2";
+        row.id = `priceRow${priceIndex}`;
+
+        //поле цена 
+        const colPrice = document.createElement("div");
+        colPrice.className = "col-4";
+        colPrice.innerHTML = `
+            <div class="form-floating mb-3 validation">
+                <input name="Prices[${priceIndex}].Price1" type="text" style="border: 1px solid #F7C9D4;"
+                       class="form-control" id="priceInput${priceIndex}" placeholder="Цена">
+                <label for="priceInput${priceIndex}" style="color: #BABABA;">Цена</label>
+                <span class="text-danger" data-valmsg-for="Prices[${priceIndex}].Price1" data-valmsg-replace="true"></span>
+            </div>
+        `;
+
+        //поле описание
+        const colDesc = document.createElement("div");
+        colDesc.className = "col-6";
+        colDesc.innerHTML = `
+            <div class="form-floating mb-3 validation">
+                <input name="Prices[${priceIndex}].Description" type="text" style="border: 1px solid #F7C9D4;"
+                       class="form-control" id="priceDescription${priceIndex}" placeholder="Описание">
+                <label for="priceDescription${priceIndex}" style="color: #BABABA;">Описание</label>
+                <span class="text-danger" data-valmsg-for="Prices[${priceIndex}].Description" data-valmsg-replace="true"></span>
+            </div>
+        `;
+
+        //кнопка удаление
+        const colRemove = document.createElement("div");
+        colRemove.className = "col-2 d-flex align-items-center justify-content-center";
+        colRemove.innerHTML = `
+            <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="removePriceField('priceRow${priceIndex}')">Удалить</button>
+        `;
+
+
+        //добавление всех элементов в строку
+        row.appendChild(colPrice);
+        row.appendChild(colDesc);
+        row.appendChild(colRemove);
+
+        //добавление строки в контейнер
+        container.appendChild(row);
+
+        priceIndex++;  //увеличение количества открытых полей
+    }
+    //удаление строки с полями
+    function removePriceField(rowId) {
+        const row = document.getElementById(rowId);
+        row.remove();
+    }
+</script>
+

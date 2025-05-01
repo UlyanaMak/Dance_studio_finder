@@ -24,5 +24,16 @@ namespace DanceStudioFinder.Services
         {
             return await _context.Admins.FirstOrDefaultAsync(a => a.IdAdmin == id);
         }
+
+
+        /// <summary>
+        /// Нахождение студии по id её администратора
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<DanceStudio?> FindStudio(int id)
+        {
+            return await _context.DanceStudios.FirstOrDefaultAsync<DanceStudio>(s => s.IdAdmin == id);
+        }
     }
 }

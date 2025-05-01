@@ -11,10 +11,12 @@ public partial class DanceStudio
 {
     [Key]
     [Column("id_studio")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int IdStudio { get; set; }
 
     [Column("name")]
-    [StringLength(255)]
+    [StringLength(255, ErrorMessage = "Название студии должно быть не более {1} символов в длину")]
+    [Required(ErrorMessage = "Название студии - обязательное поле для ввода")]
     public string Name { get; set; } = null!;
 
     [Column("id_address")]
