@@ -14,11 +14,15 @@ public partial class Address
     public int IdAddress { get; set; }
 
     [Column("entity")]
-    [StringLength(30)]
+    [StringLength(30, ErrorMessage = "Название субъекта РФ не более 30 символов")]
+    [RegularExpression(@"^[А-Яа-яЁё\s\-]+$", ErrorMessage = "В названии субъекта РФ разрешены только русские буквы")]
+    [Required(ErrorMessage = "Субъект РФ - поле обязательное для заполнения")]
     public string Entity { get; set; } = null!;
 
     [Column("locality")]
-    [StringLength(30)]
+    [StringLength(30, ErrorMessage = "Название населённого пункта не более 30 символов")]
+    [RegularExpression(@"^[А-Яа-яЁё\s\-]+$", ErrorMessage = "В названии населённого пункта разрешены только русские буквы")]
+    [Required(ErrorMessage = "Населённый пункт - поле обязательное для заполнения")]
     public string Locality { get; set; } = null!;
 
     [Column("settlement_area")]
@@ -26,14 +30,19 @@ public partial class Address
     public string? SettlementArea { get; set; }
 
     [Column("street")]
-    [StringLength(135)]
+    [StringLength(135, ErrorMessage = "Название улицы не более 135 символов")]
+    [RegularExpression(@"^[А-Яа-яЁё\s\-]+$", ErrorMessage = "В названии улицы разрешены только русские буквы")]
+    [Required(ErrorMessage = "Улица - поле обязательное для заполнения")]
     public string Street { get; set; } = null!;
 
     [Column("building_number")]
+    [Required(ErrorMessage = "Номер здания - поле обязательное для заполнения")]
+    [Range(1, 1000, ErrorMessage = "Номер здания должен быть от 1 до 1000")]
     public int BuildingNumber { get; set; }
 
     [Column("letter")]
-    [StringLength(1)]
+    [RegularExpression("^[А-Яа-яA-Za-z]$", ErrorMessage = "В литере здания допускается только одна буква")]
+    [StringLength(1, ErrorMessage = "Литера может содержать только один символ")]
     public string? Letter { get; set; }
 
     [InverseProperty("IdAddressNavigation")]

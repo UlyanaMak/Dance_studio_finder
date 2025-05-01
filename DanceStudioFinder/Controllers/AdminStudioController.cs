@@ -64,6 +64,23 @@ namespace DanceStudioFinder.Controllers
 
             return View(viewModel);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateStudio(AdminStudioViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                // Если валидация не прошла — вернем форму с ошибками
+                return View(viewModel);
+            }
+
+            // Логика сохранения студии
+            //await _adminStudioService.CreateStudio(viewModel);
+
+            // После успешного сохранения — можно перенаправить
+            return RedirectToAction("Studio", new { adminId = viewModel.Admin.IdAdmin });
+        }
     }
 }
 

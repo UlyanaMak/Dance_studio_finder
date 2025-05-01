@@ -23,23 +23,26 @@ public partial class DanceStudio
     public int IdAddress { get; set; }
 
     [Column("phone_number")]
-    [StringLength(10)]
+    [StringLength(10, MinimumLength = 10, ErrorMessage ="Длина номера телефона - 10 символов")]
+    [RegularExpression(@"^\d{10}$", ErrorMessage = "Телефон должен содержать только 10 цифр")]
+    [Required(ErrorMessage = "Номер телефона - обязательное поле для ввода")]
     public string PhoneNumber { get; set; } = null!;
 
     [Column("extra_phone_number")]
-    [StringLength(10)]
+    [StringLength(10, MinimumLength = 10, ErrorMessage = "Длина номера телефона - 10 символов")]
+    [RegularExpression(@"^\d{10}$", ErrorMessage = "Телефон должен содержать ровно 10 цифр")]
     public string? ExtraPhoneNumber { get; set; }
 
     [Column("vk_group")]
-    [StringLength(255)]
+    [StringLength(255, ErrorMessage ="Ссылка на соц. сеть ВКонтакте не более {1} символов в длину")]
     public string? VkGroup { get; set; }
 
     [Column("website")]
-    [StringLength(255)]
+    [StringLength(255, ErrorMessage = "Ссылка на сайт студии не более {1} символов в длину")]
     public string? Website { get; set; }
 
     [Column("telegram")]
-    [StringLength(64)]
+    [StringLength(64, ErrorMessage = "Ссылка на соц. сеть Telegram не более {1} символов в длину")]
     public string? Telegram { get; set; }
 
     [Column("id_admin")]
