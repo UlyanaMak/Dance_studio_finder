@@ -14,61 +14,68 @@ namespace DanceStudioFinder.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Начальная страница (выбор того, что открыть: создание или информация)
         /// </summary>
         /// <param name="id">чтобы был корректный адрес</param>
         /// <returns></returns>
         public async Task<IActionResult> Index(int adminId)
         {
-            // Ожидаем результат асинхронной операции
-            var admin = await _adminStudioService.FindAdmin(adminId);
+            var admin = await _adminStudioService.FindAdmin(adminId);  //нахождение администратора по id
 
-            if (admin == null)
+            if (admin == null)  //если не найден
             {
-                return NotFound("Администратор не найден.");
+                return NotFound("Администратор не найден.");  //сообщение об ошибке
             }
-            var adminStudio = await _adminStudioService.FindStudio(adminId);
-            if (adminStudio == null)
+            var adminStudio = await _adminStudioService.FindStudio(adminId);  //поиск студии администратора
+            if (adminStudio == null)  //студии нет
             {
-                var viewModel = new AdminStudioViewModel
+                /*var viewModel = new AdminStudioViewModel
                 {
                     Admin = admin,
                     DanceStudio = null //студии нет
-                };
-                return View("CreateStudio", viewModel);
+                };*/
+                return RedirectToAction("CreateStudio", new { adminId = adminId });     //переход на страницу с созданием студии (1)
+                //return View("CreateStudio", viewModel);
             }
-            var studioViewModel = new AdminStudioViewModel
+            //если студия есть
+            var studioViewModel = new AdminStudioViewModel  //создаем модель для представления информации о студии
             {
                 Admin = admin,
                 DanceStudio = adminStudio,
-            };
-            //передаем в представление объект admin
-            return RedirectToAction("Studio", studioViewModel);
+            }; 
+            return RedirectToAction("Studio", studioViewModel);  //преедача модели в представление с информацией о студии
         }
 
         
+        /// <summary>
+        /// (1) страница создания студии
+        /// </summary>
+        /// <param name="adminId"></param>
+        /// <returns></returns>
         public async Task<IActionResult> CreateStudio(int adminId)
         {
-            var admin = await _adminStudioService.FindAdmin(adminId);
-            if (admin == null)
+            var admin = await _adminStudioService.FindAdmin(adminId);  //нахождение администратора по id
+            if (admin == null)  //если не существует (это невозможно, но на всякий случай)
             {
-                return NotFound();
+                return NotFound();  //ошибка
             }
-
-            // Создаем модель для представления
+            //модель для представления
             var viewModel = new AdminStudioViewModel
             {
-                Admin = admin,
-                DanceStudio = null // Так как это форма создания
+                Admin = admin,  //текущий администратор
+                DanceStudio = null //студии пока нет
             };
 
-            return View(viewModel);
+            return View(viewModel);  //передача модели  представление
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateStudio(AdminStudioViewModel viewModel)
         {
+            var admin = await _adminStudioService.FindAdmin(viewModel.Admin.IdAdmin);
+            viewModel.Admin = admin;
+
             if (!ModelState.IsValid)
             {
                 // Если валидация не прошла — вернем форму с ошибками

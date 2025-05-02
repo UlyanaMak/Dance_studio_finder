@@ -11,6 +11,7 @@ public partial class Address
 {
     [Key]
     [Column("id_address")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int IdAddress { get; set; }
 
     [Column("entity")]

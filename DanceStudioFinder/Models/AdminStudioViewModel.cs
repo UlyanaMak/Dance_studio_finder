@@ -11,6 +11,6 @@
         public AgeLimit AgeLimit { get; set; }
         public Style Style { get; set; }
         public Schedule Schedule { get; set; }
-        public WeekDay WeekDay { get; set; }
+        public WeekDay WeekDay { get; set; } 
     }
 }

@@ -11,6 +11,7 @@ public partial class Price
 {
     [Key]
     [Column("id_price")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int IdPrice { get; set; }
 
     [Column("id_studio")]

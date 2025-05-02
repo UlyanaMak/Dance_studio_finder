@@ -30,7 +30,8 @@
     <input class="main-button" type="submit" onclick="location.href ='@Url.Action("Index", "Home")'" value="Выйти" />
 }
 <body>
-    <form class ="needs-validation" novalidate asp-action="CreateStudio" asp-controller="AdminStudio" method="post">
+    <form class="needs-validation" novalidate asp-controller="AdminStudio" asp-action="CreateStudio" method="post">
+        <input type="hidden" asp-for="Admin.IdAdmin" />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="container-fluid px-3">
 
