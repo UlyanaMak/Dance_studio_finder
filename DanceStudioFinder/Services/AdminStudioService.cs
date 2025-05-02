@@ -35,5 +35,10 @@ namespace DanceStudioFinder.Services
         {
             return await _context.DanceStudios.FirstOrDefaultAsync<DanceStudio>(s => s.IdAdmin == id);
         }
+
+        public List<WeekDay> GetWeekDays()
+        {
+            return _context.WeekDays.ToList();
+        }
     }
 }

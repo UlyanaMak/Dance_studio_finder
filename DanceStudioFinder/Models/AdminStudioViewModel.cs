@@ -12,5 +12,6 @@
         public Style Style { get; set; }
         public Schedule Schedule { get; set; }
         public WeekDay WeekDay { get; set; } 
+        public List<WeekDay> WeekDays { get; set; }  //дни недели для выбора пользователем
     }
 }

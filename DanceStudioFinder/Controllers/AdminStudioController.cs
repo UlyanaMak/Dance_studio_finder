@@ -63,7 +63,9 @@ namespace DanceStudioFinder.Controllers
             var viewModel = new AdminStudioViewModel
             {
                 Admin = admin,  //текущий администратор
-                DanceStudio = null //студии пока нет
+                DanceStudio = null, //студии пока нет
+                WeekDays = _adminStudioService.GetWeekDays(),  //выгрузка всех дней недели для выбора
+                Schedule = new Schedule()  //для корректного открытия модального окна в представлении
             };
 
             return View(viewModel);  //передача модели  представление

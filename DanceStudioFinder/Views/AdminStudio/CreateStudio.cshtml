@@ -23,15 +23,107 @@
     <button type="button" id="buttonToSaveChanges" class="main-button">
         Сохранить
     </button>
-    @* <button type="button" id="closeAdmin" class="main-button">
-        Выйти
-    </button> *@
     <!--Выход на главную страницу-->
     <input class="main-button" type="submit" onclick="location.href ='@Url.Action("Index", "Home")'" value="Выйти" />
 }
 <body>
+    <!-- Модальное окно для групп -->
+    <div class="modal fade" id="groupModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Информация о группе</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="groupForm">
+
+                        <!-- Поле для DanceGroup.Name -->
+                        <div class="form-floating mb-3 validation">
+                            <input asp-for="DanceGroup.Name" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="groupName" placeholder="Название группы">
+                            <label for="groupName" style="color: #BABABA;">Название группы</label>
+                            <span asp-validation-for="DanceGroup.Name" class="text-danger"></span>
+                        </div>
+
+                        <!-- Поле для выбора направления из Style -->
+                        @* <select class="form-select" id="ageLimit">
+                            <option value="0">6+</option>
+                            <option value="1">12+</option>
+                            <option value="2">16+</option>
+                            <option value="3">18+</option>
+                        </select> *@
+
+                        <!-- Поля для AgeLimit -->
+                        <label class="modal-field-title">Возрастное ограничение</label>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <!-- Поле "От" -->
+                                <div class="form-floating mb-3 validation">
+                                    <input asp-for="AgeLimit.MinAge" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="minimAge" placeholder="Минимальный возраст">
+                                    <label for="minimAge" style="color: #BABABA;">От</label>
+                                    <span asp-validation-for="AgeLimit.MinAge" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <!-- Поле "До" -->
+                                <div class="form-floating mb-3 validation">
+                                    <input asp-for="AgeLimit.MaxAge" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="maxAge" placeholder="Максимальный возраст">
+                                    <label for="maxAge" style="color: #BABABA;">До</label>
+                                    <span asp-validation-for="AgeLimit.MaxAge" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Поля для Schedule -->
+                        <label class="modal-field-title">Расписание</label>
+                        <div id="scheduleContainer">
+                            <!--Выбор дня недели из WeekDays-->
+                            <select asp-for="WeekDay.IdDay" class="form-select" style="border: 1px solid #F7C9D4; height: 50px;">
+                                @foreach (var item in Model.WeekDays)
+                                {
+                                    <option value="@item.IdDay">@item.Name</option>
+                                }
+                            </select>
+
+                            <!--Задание время начала и время окончания занятия в группе-->
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <!-- Поле "Время начала" -->
+                                    <label asp-for="Schedule.BeginTime" class="form-label">Время начала</label>
+                                    <input asp-for="Schedule.BeginTime"
+                                           type="time"
+                                           class="form-control"
+                                           value="@Model.Schedule.BeginTime.ToString("HH\\:mm")">
+                                    <span asp-validation-for="Schedule.BeginTime" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <!-- Поле "Время окончания" -->
+                                    <label asp-for="Schedule.EndTime" class="form-label">Время окончания</label>
+                                    <input asp-for="Schedule.EndTime"
+                                           type="time"
+                                           class="form-control"
+                                           value="@Model.Schedule.EndTime.ToString("HH\\:mm")">
+                                    <span asp-validation-for="Schedule.EndTime" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+
+                        <!--Добавление дня для группы в расписание-->
+                        <button type="button" class="btn btn-outline-primary" onclick="addDayField()">+ Добавить день</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-primary" onclick="saveGroup()">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <form class="needs-validation" novalidate asp-controller="AdminStudio" asp-action="CreateStudio" method="post">
         <input type="hidden" asp-for="Admin.IdAdmin" />
+        <input type="hidden" id="groupsData" name="GroupsData" />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="container-fluid px-3">
 
@@ -157,12 +249,13 @@
                 </div>
             </div>
             <!-- Кнопка добавления новых полей -->
-            <button type="button" class="btn btn-outline-primary" onclick="addPriceField()">+</button>
+            <button type="button" class="btn btn-outline-primary" onclick="addPriceField()">+ Добавить цену</button>
 
             <!--Заполнение (и добавление) групп-->
             <div class="field-title">Группы</div>
             <!--ДОПИЛИТЬ ГРУППЫ-->
-
+            <div id="groupsContainer" class="my-3"></div>
+            <button type="button" class="btn btn-outline-primary" onclick="addGroupField()">+ Добавить группу</button>
         </div>
         <!--Невидимая кнопка для активации валидации данных-->
         <button type="submit" id="saveChanges" class="main-button" style="display: none;">Сохранить</button>
@@ -175,12 +268,128 @@
 </body>
 @section Scripts {
     <script>
-        document.getElementById('buttonToSaveChanges').addEventListener('click', function () {  //нажатие на кнопку в шапке страницы
-            document.getElementById('saveChanges').click();  //нажатие невидимой кнопки в форме для валидации данных
-        });
+        function addDayField() {
+            // Контейнер, куда добавляются расписания
+            const container = document.getElementById('scheduleContainer');
+
+            // Создание оболочки для нового дня
+            const dayBlock = document.createElement('div');
+            dayBlock.classList.add('schedule-entry', 'mb-3');
+
+            // HTML для выбора дня недели и времён
+            dayBlock.innerHTML = `
+                    <hr  style="color: #F7C9D4;" />
+                    <select name="ScheduleList[0].WeekDayId" class="form-select mb-2" style="border: 1px solid #F7C9D4; height: 50px;">
+                        ${getWeekDaysOptions()}
+                    </select>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Время начала</label>
+                            <input type="time" name="ScheduleList[0].BeginTime" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Время окончания</label>
+                            <input type="time" name="ScheduleList[0].EndTime" class="form-control" />
+                        </div>
+                    </div>
+                `;
+
+            container.appendChild(dayBlock);
+        }
+
+        // Функция для получения опций дней недели из вашего Model.WeekDays
+        function getWeekDaysOptions() {
+            // Это нужно сгенерировать сервером или передать из Razor в JS (пример ниже)
+            const weekDays = [
+                { id: 1, name: 'Понедельник' },
+                { id: 2, name: 'Вторник' },
+                { id: 3, name: 'Среда' },
+                { id: 4, name: 'Четверг' },
+                { id: 5, name: 'Пятница' },
+                { id: 6, name: 'Суббота' },
+                { id: 7, name: 'Воскресенье' },
+            ];
+
+            return weekDays.map(day => `<option value="${day.id}">${day.name}</option>`).join('');
+        }
     </script>
-    <!--Добавление полей для цен танцевальной студии-->
+
     <script>
+        document.getElementById('buttonToSaveChanges').addEventListener('click', function () {
+            document.getElementById('saveChanges').click();
+        });
+
+        let currentGroupIndex = -1;
+        let groups = [];
+
+        //открытие модального окна
+        function addGroupField(index = -1) {
+            currentGroupIndex = index;  //текущий индекс группы
+            const modal = new bootstrap.Modal(document.getElementById('groupModal'));
+
+            if (index >= 0) {
+                //редактирование существующей группы
+                const group = groups[index];
+                document.getElementById('groupName').value = group.name;
+                document.getElementById('minimAge').value = group.minimAge;
+                document.getElementById('maxAge').value = group.maxAge;
+            } else {
+                //новая группа
+                document.getElementById('groupForm').reset();
+            }
+            modal.show();
+        }
+
+        //cохранение группы
+        function saveGroup() {
+            const groupData = {
+                name: document.getElementById('groupName').value,
+                minimAge: document.getElementById('minimAge').value,
+                maxAge: document.getElementById('maxAge').value
+            };
+
+            if (currentGroupIndex >= 0) {
+                groups[currentGroupIndex] = groupData;
+            } else {
+                groups.push(groupData);
+            }
+
+            updateGroupsUI();
+            updateHiddenInput();
+
+            bootstrap.Modal.getInstance(document.getElementById('groupModal')).hide();
+        }
+
+        // Обновление отображаемых кнопок групп
+        function updateGroupsUI() {
+            const container = document.getElementById('groupsContainer');
+            container.innerHTML = '';
+
+            groups.forEach((group, index) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'btn btn-outline-secondary';
+                btn.textContent = group.name;
+                btn.onclick = () => addGroupField(index);
+                container.appendChild(btn);
+            });
+        }
+
+        // Обновление скрытого input
+        function updateHiddenInput() {
+            document.getElementById('groupsData').value = JSON.stringify(groups);
+        }
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function () {
+            const savedData = document.getElementById('groupsData').value;
+            if (savedData) {
+                groups = JSON.parse(savedData);
+                updateGroupsUI();
+            }
+        });
+
+        // Код для цен (оставлен без изменений)
         let priceIndex = 1;
 
         function addPriceField() {
@@ -190,49 +399,43 @@
             row.className = "row g-2 align-items-center mb-2";
             row.id = `priceRow${priceIndex}`;
 
-            //поле цена
             const colPrice = document.createElement("div");
             colPrice.className = "col-4";
             colPrice.innerHTML = `
-                    <div class="form-floating mb-3 validation">
-                        <input name="Prices[${priceIndex}].Price1" type="text" style="border: 1px solid #F7C9D4;"
-                               class="form-control" id="priceInput${priceIndex}" placeholder="Цена">
-                        <label for="priceInput${priceIndex}" style="color: #BABABA;">Цена</label>
-                        <span class="text-danger" data-valmsg-for="Prices[${priceIndex}].Price1" data-valmsg-replace="true"></span>
-                    </div>
-                `;
+                                    <div class="form-floating mb-3 validation">
+                                        <input name="Prices[${priceIndex}].Price1" type="text" style="border: 1px solid #F7C9D4;"
+                                               class="form-control" id="priceInput${priceIndex}" placeholder="Цена">
+                                        <label for="priceInput${priceIndex}" style="color: #BABABA;">Цена</label>
+                                        <span class="text-danger" data-valmsg-for="Prices[${priceIndex}].Price1" data-valmsg-replace="true"></span>
+                                    </div>
+                                `;
 
-            //поле описание
             const colDesc = document.createElement("div");
             colDesc.className = "col-6";
             colDesc.innerHTML = `
-                    <div class="form-floating mb-3 validation">
-                        <input name="Prices[${priceIndex}].Description" type="text" style="border: 1px solid #F7C9D4;"
-                               class="form-control" id="priceDescription${priceIndex}" placeholder="Описание">
-                        <label for="priceDescription${priceIndex}" style="color: #BABABA;">Описание</label>
-                        <span class="text-danger" data-valmsg-for="Prices[${priceIndex}].Description" data-valmsg-replace="true"></span>
-                    </div>
-                `;
+                                    <div class="form-floating mb-3 validation">
+                                        <input name="Prices[${priceIndex}].Description" type="text" style="border: 1px solid #F7C9D4;"
+                                               class="form-control" id="priceDescription${priceIndex}" placeholder="Описание">
+                                        <label for="priceDescription${priceIndex}" style="color: #BABABA;">Описание</label>
+                                        <span class="text-danger" data-valmsg-for="Prices[${priceIndex}].Description" data-valmsg-replace="true"></span>
+                                    </div>
+                                `;
 
-            //кнопка удаление
             const colRemove = document.createElement("div");
             colRemove.className = "col-2 d-flex align-items-center justify-content-center";
             colRemove.innerHTML = `
-                    <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="removePriceField('priceRow${priceIndex}')">Удалить</button>
-                `;
+                                    <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="removePriceField('priceRow${priceIndex}')">Удалить</button>
+                                `;
 
-
-            //добавление всех элементов в строку
             row.appendChild(colPrice);
             row.appendChild(colDesc);
             row.appendChild(colRemove);
 
-            //добавление строки в контейнер
             container.appendChild(row);
 
-            priceIndex++;  //увеличение количества открытых полей
+            priceIndex++;
         }
-        //удаление строки с полями
+
         function removePriceField(rowId) {
             const row = document.getElementById(rowId);
             row.remove();
