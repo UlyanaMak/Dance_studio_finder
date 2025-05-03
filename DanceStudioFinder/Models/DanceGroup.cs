@@ -11,13 +11,15 @@ public partial class DanceGroup
 {
     [Key]
     [Column("id_group")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int IdGroup { get; set; }
 
     [Column("id_studio")]
     public int IdStudio { get; set; }
 
     [Column("name")]
-    [StringLength(150)]
+    [StringLength(150, ErrorMessage = "Название группы должно быть не более 150 символов в длину\"")]
+    [Required(ErrorMessage = "Название группы - обязательное поле для ввода")]
     public string Name { get; set; } = null!;
 
     [Column("id_style")]

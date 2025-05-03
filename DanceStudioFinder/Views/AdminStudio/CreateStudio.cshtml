@@ -45,16 +45,28 @@
                             <span asp-validation-for="DanceGroup.Name" class="text-danger"></span>
                         </div>
 
-                        <!-- Поле для выбора направления из Style -->
-                        @* <select class="form-select" id="ageLimit">
-                            <option value="0">6+</option>
-                            <option value="1">12+</option>
-                            <option value="2">16+</option>
-                            <option value="3">18+</option>
-                        </select> *@
+                        <!--Выбор направления из Styles-->
+                        <label class="modal-field-title">Направление</label>
+                        <select asp-for="Style.IdStyle" class="form-select" style="border: 1px solid #F7C9D4; height: 50px;">
+                            @foreach (var style in Model.Styles)
+                            {
+                                if (style.NameEng == null)
+                                {
+                                    <option value="@style.IdStyle">@style.NameRus</option>
+                                }
+                                else if (style.NameRus == null)
+                                {
+                                    <option value="@style.IdStyle">@style.NameEng</option>
+                                }
+                                else
+                                {
+                                    <option value="@style.IdStyle">@($"{style.NameEng} ({style.NameRus})")</option>
+                                }
+                            }
+                        </select>
 
                         <!-- Поля для AgeLimit -->
-                        <label class="modal-field-title">Возрастное ограничение</label>
+                        <label class="modal-field-title" style="margin-top: 15px;">Возрастное ограничение</label>
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <!-- Поле "От" -->
@@ -76,7 +88,7 @@
 
                         <!-- Поля для Schedule -->
                         <label class="modal-field-title">Расписание</label>
-                        <div id="scheduleContainer">
+                        <div id="scheduleContainer" style="margin-bottom: 5px;">
                             <!--Выбор дня недели из WeekDays-->
                             <select asp-for="WeekDay.IdDay" class="form-select" style="border: 1px solid #F7C9D4; height: 50px;">
                                 @foreach (var item in Model.WeekDays)
@@ -89,20 +101,14 @@
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <!-- Поле "Время начала" -->
-                                    <label asp-for="Schedule.BeginTime" class="form-label">Время начала</label>
-                                    <input asp-for="Schedule.BeginTime"
-                                           type="time"
-                                           class="form-control"
-                                           value="@Model.Schedule.BeginTime.ToString("HH\\:mm")">
+                                    <label asp-for="Schedule.BeginTime" class="form-label" style="margin-top: 5px;">Время начала</label>
+                                    <input asp-for="Schedule.BeginTime" type="time" style="border: 1px solid #F7C9D4;" class="form-control" value="@Model.Schedule.BeginTime.ToString("HH\\:mm")" id="beginTime">
                                     <span asp-validation-for="Schedule.BeginTime" class="text-danger"></span>
                                 </div>
                                 <div class="col-md-6">
                                     <!-- Поле "Время окончания" -->
-                                    <label asp-for="Schedule.EndTime" class="form-label">Время окончания</label>
-                                    <input asp-for="Schedule.EndTime"
-                                           type="time"
-                                           class="form-control"
-                                           value="@Model.Schedule.EndTime.ToString("HH\\:mm")">
+                                    <label asp-for="Schedule.EndTime" class="form-label" style="margin-top: 5px;">Время окончания</label>
+                                    <input asp-for="Schedule.EndTime" type="time" style="border: 1px solid #F7C9D4;" class="form-control" value="@Model.Schedule.EndTime.ToString("HH\\:mm")" id="endTime">
                                     <span asp-validation-for="Schedule.EndTime" class="text-danger"></span>
                                 </div>
                             </div>
@@ -111,12 +117,13 @@
 
                         <!--Добавление дня для группы в расписание-->
                         <button type="button" class="btn btn-outline-primary" onclick="addDayField()">+ Добавить день</button>
+                        <button type="submit" class="btn btn-primary" onclick="saveGroup()">Сохранить</button>
                     </form>
                 </div>
-                <div class="modal-footer">
+                @* <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                    <button type="button" class="btn btn-primary" onclick="saveGroup()">Сохранить</button>
-                </div>
+                    
+                </div> *@
             </div>
         </div>
     </div>
@@ -267,50 +274,80 @@
 
 </body>
 @section Scripts {
+    @* <script>
+        document.getElementById('groupForm').addEventListener('submit', function (e) {
+            const begin = document.getElementById('beginTime').value;
+            const end = document.getElementById('endTime').value;
+
+            if (begin && end && begin >= end) {
+                e.preventDefault(); // Останавливаем отправку формы
+                alert("Время окончания должно быть позже времени начала.");
+            }
+        });
+    </script> *@
     <script>
+        let scheduleIndex = 0; // Глобальный счетчик для индексов расписаний
+
         function addDayField() {
-            // Контейнер, куда добавляются расписания
             const container = document.getElementById('scheduleContainer');
 
-            // Создание оболочки для нового дня
-            const dayBlock = document.createElement('div');
-            dayBlock.classList.add('schedule-entry', 'mb-3');
+            // Создаем блок для нового расписания
+            const scheduleBlock = document.createElement('div');
+            scheduleBlock.className = 'schedule-entry mb-3';
 
-            // HTML для выбора дня недели и времён
-            dayBlock.innerHTML = `
-                    <hr  style="color: #F7C9D4;" />
-                    <select name="ScheduleList[0].WeekDayId" class="form-select mb-2" style="border: 1px solid #F7C9D4; height: 50px;">
-                        ${getWeekDaysOptions()}
-                    </select>
+            // Генерируем HTML с правильными индексами
+            scheduleBlock.innerHTML = `
+                    <hr style="color: #F7C9D4;" />
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <select name="ScheduleList[${scheduleIndex}].WeekDayId" class="form-select" style="border: 1px solid #F7C9D4; height: 50px; width: 80%;">
+                            ${getWeekDaysOptions()}
+                        </select>
+                        <button type="button" class="btn btn-outline-danger btn-sm h-50" onclick="removeScheduleBlock(this)"
+                                style="border: 1px solid #F7C9D4; height: 50px; width: 20%;">
+                            Удалить
+                        </button>
+                    </div>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Время начала</label>
-                            <input type="time" name="ScheduleList[0].BeginTime" class="form-control" />
+                            <input type="time" style="border: 1px solid #F7C9D4;" name="ScheduleList[${scheduleIndex}].BeginTime" class="form-control" />
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Время окончания</label>
-                            <input type="time" name="ScheduleList[0].EndTime" class="form-control" />
+                            <input type="time" style="border: 1px solid #F7C9D4;" name="ScheduleList[${scheduleIndex}].EndTime" class="form-control" />
                         </div>
                     </div>
                 `;
 
-            container.appendChild(dayBlock);
+            container.appendChild(scheduleBlock);
+            scheduleIndex++; // Увеличиваем счетчик для следующего элемента
         }
 
-        // Функция для получения опций дней недели из вашего Model.WeekDays
+        // Функция удаления блока расписания
+        function removeScheduleBlock(button) {
+            const block = button.closest('.schedule-entry');
+            block.remove();
+        }
+
+        // Генерация опций дней недели из модели Razor
         function getWeekDaysOptions() {
-            // Это нужно сгенерировать сервером или передать из Razor в JS (пример ниже)
-            const weekDays = [
-                { id: 1, name: 'Понедельник' },
-                { id: 2, name: 'Вторник' },
-                { id: 3, name: 'Среда' },
-                { id: 4, name: 'Четверг' },
-                { id: 5, name: 'Пятница' },
-                { id: 6, name: 'Суббота' },
-                { id: 7, name: 'Воскресенье' },
+            // Вариант 1: Если передаем данные из Razor в JS
+        @* const weekDays = @Json.Serialize(Model.WeekDays); *@
+
+                // Вариант 2: Статичные данные (временное решение)
+                const weekDays = [
+                { idDay: 1, name: 'Понедельник' },
+                { idDay: 2, name: 'Вторник' },
+                { idDay: 3, name: 'Среда' },
+                { idDay: 4, name: 'Четверг' },
+                { idDay: 5, name: 'Пятница' },
+                { idDay: 6, name: 'Суббота' },
+                { idDay: 7, name: 'Воскресенье' }
             ];
 
-            return weekDays.map(day => `<option value="${day.id}">${day.name}</option>`).join('');
+            return weekDays.map(day =>
+                `<option value="${day.idDay}">${day.name}</option>`
+            ).join('');
         }
     </script>
 

@@ -4,21 +4,29 @@
 }
 
 body {
-    background: white;  /*цвет фона*/
+    background: white; /*цвет фона*/
+    padding-top: 80px; /*отступ для фиксации шапки*/
 }
 
 header {
+    /*фиксация шапки страницы при скроллинге body*/
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    /*Фиксация шапки страницы при скроллинге body*/
     background-color: #ffe1e6;
     height: 80px;
     width: 100%;
     align-items: center;
     display: flex;
-    justify-content: space-between; /* Распределяет пространство между элементами */
-    padding: 0 20px; /* Добавляем отступы слева и справа */
+    justify-content: space-between; /* разспределение пространства между эл-ми*/
+    padding: 0 20px; /*отступы слева и справа*/
 }
 
     header .logo {
-        font-weight: 600;
+        font-weight: 600;  /*толщина в пикселях*/
         font-size: 25px;
         font-family: "Times New Roman",sans-serif;
         margin-right: 20px;
@@ -71,7 +79,6 @@ header {
     width: 95%;
     font-family: "Times New Roman",sans-serif;
     font-size: 25px;
-    /*margin-top: 20px;*/
 }
     .find-studio-button:hover {
         background-color: white; 

@@ -11,6 +11,7 @@ public partial class AgeLimit
 {
     [Key]
     [Column("id_age_limit")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int IdAgeLimit { get; set; }
 
     [Column("name")]

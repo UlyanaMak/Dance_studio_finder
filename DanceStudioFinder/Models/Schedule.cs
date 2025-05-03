@@ -11,6 +11,7 @@ public partial class Schedule
 {
     [Key]
     [Column("id_schedule")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int IdSchedule { get; set; }
 
     [Column("id_group")]
@@ -23,6 +24,7 @@ public partial class Schedule
     public TimeOnly BeginTime { get; set; }
 
     [Column("end_time")]
+    [CustomValidation(typeof(Schedule), nameof(ValidateEndTime))]
     public TimeOnly EndTime { get; set; }
 
     [ForeignKey("IdDay")]
@@ -32,4 +34,16 @@ public partial class Schedule
     [ForeignKey("IdGroup")]
     [InverseProperty("Schedules")]
     public virtual DanceGroup IdGroupNavigation { get; set; } = null!;
+
+    /// <summary>
+    /// Валидация времени
+    /// </summary>
+    /// <param name="endTime"></param>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    public static ValidationResult? ValidateEndTime(TimeOnly endTime, ValidationContext context)
+    {
+        var instance = (Schedule)context.ObjectInstance;
+        return endTime > instance.BeginTime? ValidationResult.Success:new ValidationResult("Время окончания должно быть позже времени начала");
+    }
 }

@@ -36,9 +36,24 @@ namespace DanceStudioFinder.Services
             return await _context.DanceStudios.FirstOrDefaultAsync<DanceStudio>(s => s.IdAdmin == id);
         }
 
+
+        /// <summary>
+        /// Выгрузка таблицы с днями недели из БД
+        /// </summary>
+        /// <returns></returns>
         public List<WeekDay> GetWeekDays()
         {
             return _context.WeekDays.ToList();
+        }
+
+
+        /// <summary>
+        /// Выгрузка танцевальных стилей из БД
+        /// </summary>
+        /// <returns></returns>
+        public List<Style> GetStyles()
+        {
+            return _context.Styles.OrderBy(s => s.IdStyle).ToList();
         }
     }
 }
