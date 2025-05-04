@@ -9,11 +9,11 @@ namespace DanceStudioFinder.Controllers
     public class AdminStudioController : Controller
     {
         private readonly AdminStudioService _adminStudioService;
-        private readonly YandexMapsService _yandexMapsService;
-        public AdminStudioController(AdminStudioService adminStudioService, YandexMapsService yandexMapsService)
+        private readonly OpenStreetMapService _openStreetMapsService;
+        public AdminStudioController(AdminStudioService adminStudioService, OpenStreetMapService openStreetMapsService)
         {
             _adminStudioService = adminStudioService;
-            _yandexMapsService = yandexMapsService; 
+            _openStreetMapsService = openStreetMapsService; 
         }
 
         /// <summary>
@@ -34,6 +34,8 @@ namespace DanceStudioFinder.Controllers
             {
                 return RedirectToAction("CreateAddressStudio", new { adminId = adminId });     //переход на страницу с созданием студии (1)
             }
+
+            //!!!!!!!!!!!!!!!!Здесь измнеить модель представления
             //если студия есть
             var studioViewModel = new CreateAddressStudioViewModel  //создаем модель для представления информации о студии
             {
@@ -41,9 +43,10 @@ namespace DanceStudioFinder.Controllers
                 DanceStudio = adminStudio,
             }; 
             return RedirectToAction("Studio", studioViewModel);  //преедача модели в представление с информацией о студии
+            //!!!!!!!!!!!!!!!!Здесь измнеить модель представления
         }
 
-        
+
         /// <summary>
         /// (1) страница создания студии
         /// </summary>
@@ -71,33 +74,78 @@ namespace DanceStudioFinder.Controllers
         {
             var admin = await _adminStudioService.FindAdmin(viewModel.Admin.IdAdmin);
             viewModel.Admin = admin;
-            var (isValid, settlementArea) = await _yandexMapsService.ValidateAddressAsync(
+            var (isValid, settlementArea) = await _openStreetMapsService.ValidateAddressAsync(
                     viewModel.Address.Entity,
                     viewModel.Address.Locality,
                     viewModel.Address.Street,
                     viewModel.Address.BuildingNumber,
                     viewModel.Address.Letter);
 
-            if (!isValid)
+            if (!isValid)  //если адрес не найден
             {
-                ModelState.AddModelError("Address", "Адрес не найден на карте. Пожалуйста, проверьте правильность введённых данных.");
-                return View(viewModel);
+                ModelState.AddModelError("Address.Entity", "Адрес не найден. Пожалуйста, проверьте правильность введённых данных.");  //сообщение
+                return View(viewModel);  //возврат на текущую страницу с сообщением
             }
 
-            // Устанавливаем район, если он найден
+            //установка района (м.б. null)
             viewModel.Address.SettlementArea = settlementArea;
 
-            if (!ModelState.IsValid)  //ОСТАНОВИЛАСЬ ТУТ (НЕВАЛИДНЫЕ СВЯЗИ С ADMIN И ADDRESS
+            int addressIndex;
+            int addressExist = await _adminStudioService.FindAddress(viewModel.Address); //проверка, существует ли такой адрес
+            if (addressExist == 0)  //если не существует
             {
-                // Если валидация не прошла — вернем форму с ошибками
+                //создаём адрес
+                addressIndex = await _adminStudioService.SaveAddress(viewModel.Address); //извлекаем индекс
+            }
+            else //если существует
+            {
+                addressIndex = addressExist;
+            }
+
+            viewModel.DanceStudio.IdAddress = addressIndex;
+            viewModel.DanceStudio.IdAdmin = admin.IdAdmin;
+            ModelState.Remove("DanceStudio.IdAddressNavigation");
+            ModelState.Remove("DanceStudio.IdAdminNavigation");
+
+            if (!ModelState.IsValid)
+            {
                 return View(viewModel);
             }
-            
-            // Логика сохранения студии
-            //await _adminStudioService.CreateAddressStudio(viewModel);
+
+            var result = await _adminStudioService.SaveStudio(addressIndex, admin, viewModel.DanceStudio);
+
+            if (!result)
+            {
+                ModelState.AddModelError("", "Произошла ошибка при сохранении студии");
+                return View(viewModel);
+            }
 
             // После успешного сохранения — можно перенаправить
-            return RedirectToAction("Studio", new { adminId = viewModel.Admin.IdAdmin });
+            return RedirectToAction("CreatePricesStudio", new { adminId = admin.IdAdmin });
+        }
+
+
+        /// <summary>
+        /// (2) страница создания цен студии
+        /// </summary>
+        /// <param name="adminId"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> CreatePricesStudio(int adminId)
+        {
+            var admin = await _adminStudioService.FindAdmin(adminId);  //нахождение администратора по id
+            if (admin == null)  //если не существует (это невозможно, но на всякий случай)
+            {
+                return NotFound();  //ошибка
+            }
+            var adminStudio = await _adminStudioService.FindStudio(adminId);
+            //модель для представления
+            var viewModel = new CreatePricesStudioViewModel
+            {
+                Admin = admin,                                 //текущий администратор
+                DanceStudio = adminStudio,                     //студия
+
+            };
+            return View(viewModel);  //передача модели  представление
         }
     }
 }

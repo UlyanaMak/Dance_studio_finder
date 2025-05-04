@@ -2,6 +2,7 @@
 using DanceStudioFinder.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace DanceStudioFinder.Services
 {
@@ -38,6 +39,27 @@ namespace DanceStudioFinder.Services
 
 
         /// <summary>
+        /// Нахождение студии по id её администратора
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<int> FindAddress(Address address)
+        {
+            var result = await _context.Addresses
+                .Where(a => a.Entity == address.Entity &&
+                a.Locality == address.Locality &&
+                a.Street == address.Street &&
+                a.BuildingNumber == address.BuildingNumber &&
+                a.Letter == address.Letter &&
+                a.SettlementArea == address.SettlementArea)
+                .Select(a => a.IdAddress)
+                .FirstOrDefaultAsync();
+
+            return result; // вернет 0 если адрес не найден
+        }
+
+
+        /// <summary>
         /// Выгрузка таблицы с днями недели из БД
         /// </summary>
         /// <returns></returns>
@@ -63,9 +85,40 @@ namespace DanceStudioFinder.Services
         /// <param name="address"></param>
         /// <param name="studio"></param>
         /// <returns></returns>
-        public async Task<bool> CreateAddressStudio(Address address, DanceStudio studio)
+        public async Task<int> SaveAddress(Address address)
         {
-            return false;
+            await _context.Addresses.AddAsync(address);
+            await _context.SaveChangesAsync();
+
+            // Возвращаем ID нового адреса
+            return address.IdAddress;
+        }
+
+        /// <summary>
+        /// Сохранение студии в БД
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="studio"></param>
+        /// <returns></returns>
+        public async Task<bool> SaveStudio(int addressId, Admin admin, DanceStudio studio)
+        {
+            try
+            {
+                // Устанавливаем связи
+                studio.IdAddress = addressId;
+                studio.IdAdmin = admin.IdAdmin;
+
+                // Сохраняем студию
+                await _context.DanceStudios.AddAsync(studio);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
         }
     }
 }
