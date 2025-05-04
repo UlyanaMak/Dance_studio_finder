@@ -55,5 +55,17 @@ namespace DanceStudioFinder.Services
         {
             return _context.Styles.OrderBy(s => s.IdStyle).ToList();
         }
+
+
+        /// <summary>
+        /// Сохранение адреса и студии в БД
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="studio"></param>
+        /// <returns></returns>
+        public async Task<bool> CreateAddressStudio(Address address, DanceStudio studio)
+        {
+            return false;
+        }
     }
 }

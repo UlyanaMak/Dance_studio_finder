@@ -12,6 +12,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IPasswordHasher<Admin>, PasswordHasher<Admin>>();
 builder.Services.AddScoped<AdminStudioService>();
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<YandexMapsService>();
 
 
 // Add services to the container.

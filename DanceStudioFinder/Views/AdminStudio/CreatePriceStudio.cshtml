@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="~/css/adminStudio.css" asp-append-version="true" />
 </head>
 
-@section AdminInfo{
+@section AdminInfo {
     @($"Администратор: {Model.Admin.Name} {Model.Admin.Surname}")
     <button type="button" id="deleteAdmin" class="main-button">
         Удалить администратора
@@ -21,7 +21,7 @@
 @section HeaderButtons {
     <!--Кнопка сохранения, нажимает сохранение в форме-->
     <button type="button" id="buttonToSaveChanges" class="main-button">
-        Сохранить
+        Далее
     </button>
     <!--Выход на главную страницу-->
     <input class="main-button" type="submit" onclick="location.href ='@Url.Action("Index", "Home")'" value="Выйти" />
@@ -113,7 +113,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
 
                         <!--Добавление дня для группы в расписание-->
                         <button type="button" class="btn btn-outline-primary" onclick="addDayField()">+ Добавить день</button>
@@ -121,14 +121,14 @@
                     </form>
                 </div>
                 @* <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                    
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+
                 </div> *@
             </div>
         </div>
     </div>
 
-    <form class="needs-validation" novalidate asp-controller="AdminStudio" asp-action="CreateStudio" method="post">
+    <form class="needs-validation" novalidate asp-controller="AdminStudio" asp-action="CreateAddressStudio" method="post">
         <input type="hidden" asp-for="Admin.IdAdmin" />
         <input type="hidden" id="groupsData" name="GroupsData" />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -297,27 +297,27 @@
 
             // Генерируем HTML с правильными индексами
             scheduleBlock.innerHTML = `
-                    <hr style="color: #F7C9D4;" />
-                    <div class="d-flex align-items-center gap-2 mb-2">
-                        <select name="ScheduleList[${scheduleIndex}].WeekDayId" class="form-select" style="border: 1px solid #F7C9D4; height: 50px; width: 80%;">
-                            ${getWeekDaysOptions()}
-                        </select>
-                        <button type="button" class="btn btn-outline-danger btn-sm h-50" onclick="removeScheduleBlock(this)"
-                                style="border: 1px solid #F7C9D4; height: 50px; width: 20%;">
-                            Удалить
-                        </button>
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Время начала</label>
-                            <input type="time" style="border: 1px solid #F7C9D4;" name="ScheduleList[${scheduleIndex}].BeginTime" class="form-control" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Время окончания</label>
-                            <input type="time" style="border: 1px solid #F7C9D4;" name="ScheduleList[${scheduleIndex}].EndTime" class="form-control" />
-                        </div>
-                    </div>
-                `;
+                                    <hr style="color: #F7C9D4;" />
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <select name="ScheduleList[${scheduleIndex}].WeekDayId" class="form-select" style="border: 1px solid #F7C9D4; height: 50px; width: 80%;">
+                                            ${getWeekDaysOptions()}
+                                        </select>
+                                        <button type="button" class="btn btn-outline-danger btn-sm h-50" onclick="removeScheduleBlock(this)"
+                                                style="border: 1px solid #F7C9D4; height: 50px; width: 20%;">
+                                            Удалить
+                                        </button>
+                                    </div>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Время начала</label>
+                                            <input type="time" style="border: 1px solid #F7C9D4;" name="ScheduleList[${scheduleIndex}].BeginTime" class="form-control" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Время окончания</label>
+                                            <input type="time" style="border: 1px solid #F7C9D4;" name="ScheduleList[${scheduleIndex}].EndTime" class="form-control" />
+                                        </div>
+                                    </div>
+                                `;
 
             container.appendChild(scheduleBlock);
             scheduleIndex++; // Увеличиваем счетчик для следующего элемента
@@ -334,8 +334,8 @@
             // Вариант 1: Если передаем данные из Razor в JS
         @* const weekDays = @Json.Serialize(Model.WeekDays); *@
 
-                // Вариант 2: Статичные данные (временное решение)
-                const weekDays = [
+                                // Вариант 2: Статичные данные (временное решение)
+                                const weekDays = [
                 { idDay: 1, name: 'Понедельник' },
                 { idDay: 2, name: 'Вторник' },
                 { idDay: 3, name: 'Среда' },
@@ -439,30 +439,30 @@
             const colPrice = document.createElement("div");
             colPrice.className = "col-4";
             colPrice.innerHTML = `
-                                    <div class="form-floating mb-3 validation">
-                                        <input name="Prices[${priceIndex}].Price1" type="text" style="border: 1px solid #F7C9D4;"
-                                               class="form-control" id="priceInput${priceIndex}" placeholder="Цена">
-                                        <label for="priceInput${priceIndex}" style="color: #BABABA;">Цена</label>
-                                        <span class="text-danger" data-valmsg-for="Prices[${priceIndex}].Price1" data-valmsg-replace="true"></span>
-                                    </div>
-                                `;
+                                                    <div class="form-floating mb-3 validation">
+                                                        <input name="Prices[${priceIndex}].Price1" type="text" style="border: 1px solid #F7C9D4;"
+                                                               class="form-control" id="priceInput${priceIndex}" placeholder="Цена">
+                                                        <label for="priceInput${priceIndex}" style="color: #BABABA;">Цена</label>
+                                                        <span class="text-danger" data-valmsg-for="Prices[${priceIndex}].Price1" data-valmsg-replace="true"></span>
+                                                    </div>
+                                                `;
 
             const colDesc = document.createElement("div");
             colDesc.className = "col-6";
             colDesc.innerHTML = `
-                                    <div class="form-floating mb-3 validation">
-                                        <input name="Prices[${priceIndex}].Description" type="text" style="border: 1px solid #F7C9D4;"
-                                               class="form-control" id="priceDescription${priceIndex}" placeholder="Описание">
-                                        <label for="priceDescription${priceIndex}" style="color: #BABABA;">Описание</label>
-                                        <span class="text-danger" data-valmsg-for="Prices[${priceIndex}].Description" data-valmsg-replace="true"></span>
-                                    </div>
-                                `;
+                                                    <div class="form-floating mb-3 validation">
+                                                        <input name="Prices[${priceIndex}].Description" type="text" style="border: 1px solid #F7C9D4;"
+                                                               class="form-control" id="priceDescription${priceIndex}" placeholder="Описание">
+                                                        <label for="priceDescription${priceIndex}" style="color: #BABABA;">Описание</label>
+                                                        <span class="text-danger" data-valmsg-for="Prices[${priceIndex}].Description" data-valmsg-replace="true"></span>
+                                                    </div>
+                                                `;
 
             const colRemove = document.createElement("div");
             colRemove.className = "col-2 d-flex align-items-center justify-content-center";
             colRemove.innerHTML = `
-                                    <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="removePriceField('priceRow${priceIndex}')">Удалить</button>
-                                `;
+                                                    <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="removePriceField('priceRow${priceIndex}')">Удалить</button>
+                                                `;
 
             row.appendChild(colPrice);
             row.appendChild(colDesc);
@@ -479,7 +479,3 @@
         }
     </script>
 }
-
-
-
-

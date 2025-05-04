@@ -1,0 +1,158 @@
+﻿@model DanceStudioFinder.ViewModels.CreateAddressStudioViewModel 
+
+@{
+    ViewData["Title"] = "Добавление адреса и контактных данных студии";
+}
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Поиск танцевальных студий</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/adminStudio.css" asp-append-version="true" />
+</head>
+
+@section AdminInfo {
+    @($"Администратор: {Model.Admin.Name} {Model.Admin.Surname}")
+    <button type="button" id="deleteAdmin" class="main-button">
+        Удалить администратора
+    </button>
+}
+@section HeaderButtons {
+    <!--Кнопка сохранения, нажимает сохранение в форме-->
+    <button type="button" id="buttonToContinue" class="main-button">
+        Далее
+    </button>
+    <!--Выход на главную страницу-->
+    <input class="main-button" type="submit" onclick="location.href ='@Url.Action("Index", "Home")'" value="Выйти" />
+}
+<body>
+    <form class="needs-validation" novalidate asp-controller="AdminStudio" asp-action="CreateAddressStudio" method="post">
+        <input type="hidden" asp-for="Admin.IdAdmin" />
+        <input type="hidden" id="groupsData" name="GroupsData" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="container-fluid px-3">
+
+            <!-- Название студии-->
+            <div class="form-floating mb-3 mt-3 validation" style="width: 700px;">
+                <input asp-for="DanceStudio.Name" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="studioName" placeholder="Название студии">
+                <label for="floatingInput" style="color: #BABABA;">Название студии</label>
+                <span asp-validation-for="DanceStudio.Name" class="text-danger"></span>
+            </div>
+
+            <!-- Заполнение адреса студии -->
+            <span class="field-title">Адрес</span>
+            <div class="row g-3 align-items-center">
+                <div class="col">
+                    <!-- Поле 1 -->
+                    <div class="form-floating mb-3 validation">
+                        <input asp-for="Address.Entity" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="entity" placeholder="Субъект РФ">
+                        <label for="floatingInput" style="color: #BABABA;">Субъект РФ</label>
+                        <span asp-validation-for="Address.Entity" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col">
+                    <!-- Поле 2 -->
+                    <div class="form-floating mb-3 validation">
+                        <input asp-for="Address.Locality" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="locality" placeholder="Населённый пункт">
+                        <label for="floatingInput" style="color: #BABABA;">Населённый пункт (город/посёлок)</label>
+                        <span asp-validation-for="Address.Locality" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col">
+                    <!-- Поле 3 -->
+                    <div class="form-floating mb-3 validation">
+                        <input asp-for="Address.Street" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="street" placeholder="Улица">
+                        <label for="floatingInput" style="color: #BABABA;">Улица</label>
+                        <span asp-validation-for="Address.Street" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col">
+                    <!-- Поле 4 -->
+                    <div class="form-floating mb-3 validation">
+                        <input asp-for="Address.BuildingNumber" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="buildingNumber" placeholder="Номер здания">
+                        <label for="floatingInput" style="color: #BABABA;">Номер здания</label>
+                        <span asp-validation-for="Address.BuildingNumber" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col">
+                    <!-- Поле 5 -->
+                    <div class="form-floating mb-3 validation">
+                        <input asp-for="Address.Letter" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="buildingLetter" placeholder="Литера здания">
+                        <label for="floatingInput" style="color: #BABABA;">Литера здания</label>
+                        <span asp-validation-for="Address.Letter" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!--Заполнение контакнтых данных-->
+            <span class="field-title">Контактные данные</span>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <!-- Поле 1 -->
+                    <div class="form-floating mb-3 validation">
+                        <input asp-for="DanceStudio.PhoneNumber" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="phoneNumber" placeholder="Телефон">
+                        <label for="floatingInput" style="color: #BABABA;">Телефон (+7)</label>
+                        <span asp-validation-for="DanceStudio.PhoneNumber" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <!-- Поле 2 -->
+                    <div class="form-floating mb-3 validation">
+                        <input asp-for="DanceStudio.ExtraPhoneNumber" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="extraPhoneNumber" placeholder="Доп. телефон">
+                        <label for="floatingInput" style="color: #BABABA;">Доп. телефон (+7)</label>
+                        <span asp-validation-for="DanceStudio.ExtraPhoneNumber" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <!-- Поле 1 -->
+                    <div class="form-floating mb-3 validation">
+                        <input asp-for="DanceStudio.Website" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="siteLink" placeholder="Ссылка на сайт">
+                        <label for="floatingInput" style="color: #BABABA;">Ссылка на сайт</label>
+                        <span asp-validation-for="DanceStudio.Website" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <!-- Поле 2 -->
+                    <div class="form-floating mb-3 validation">
+                        <input asp-for="DanceStudio.VkGroup" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="VKlink" placeholder="Ссылка на ВКонтакте">
+                        <label for="floatingInput" style="color: #BABABA;">Ссылка на ВКонтакте</label>
+                        <span asp-validation-for="DanceStudio.VkGroup" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <!-- Поле 3 -->
+                    <div class="form-floating mb-3 validation">
+                        <input asp-for="DanceStudio.Telegram" type="text" style="border: 1px solid #F7C9D4;" class="form-control" id="TGlink" placeholder="Ссылка на Telegram">
+                        <label for="floatingInput" style="color: #BABABA;">Ссылка на Telegram</label>
+                        <span asp-validation-for="DanceStudio.Telegram" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Невидимая кнопка для активации валидации данных-->
+        <button type="submit" id="continue" class="main-button" style="display: none;">Далее</button>
+    </form>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+
+</body>
+@section Scripts {
+    <script>
+        document.getElementById('buttonToContinue').addEventListener('click', function () {
+            document.getElementById('continue').click();
+        });
+    </script>
+}
+
+
+
+
+
+
+
+
