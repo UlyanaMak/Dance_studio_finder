@@ -47,7 +47,7 @@
                     </div>
                     <div class="col-6">
                         <div class="form-floating mb-3 validation">
-                            <input asp-for="Prices[0].Description" type="text" style="border: 1px solid #F7C9D4;" class="form-control description-input" placeholder="Описание">
+                            <input asp-for="Prices[0].Description" type="text" style="border: 1px solid #F7C9D4;" class="form-control description-input" placeholder="Описание" >
                             <label>Описание</label>
                             <span asp-validation-for="Prices[0].Description" class="text-danger"></span>
                         </div>
@@ -75,41 +75,58 @@
             document.getElementById('saveChanges').click();
         });
 
-        let priceIndex = 1; // Начинаем с 1, так как 0 уже есть
+        let priceIndex = @(Model.Prices?.Count ?? 1); // Начинаем с текущего количества цен
 
         function addPriceField() {
             const container = document.getElementById("price-container");
+            const newIndex = priceIndex++;
 
             const row = document.createElement("div");
             row.className = "row g-2 align-items-center mb-2 price-row";
-            row.id = `priceRow${priceIndex}`;
+            row.id = `priceRow${newIndex}`;
 
             row.innerHTML = `
                 <div class="col-4">
                     <div class="form-floating mb-3 validation">
-                        <input name="Prices[${priceIndex}].Price1" type="text"
+                        <input name="Prices[${newIndex}].Price1"
+                               type="number"
+                               min="0"
+                               max="10000"
                                style="border: 1px solid #F7C9D4;"
-                               class="form-control price-input" placeholder="Цена">
+                               class="form-control price-input"
+                               placeholder="Цена"
+                               data-val="true"
+                               data-val-required="Цена - поле обязательное для заполнения"
+                               data-val-range="Стоимость занятия должна быть от 0 - бесплатно - до 10 000 рублей"
+                               data-val-range-min="0"
+                               data-val-range-max="10000"
+                               data-val-number="Поле должно содержать числовое значение">
                         <label>Цена</label>
                         <span class="text-danger field-validation-valid"
-                              data-valmsg-for="Prices[${priceIndex}].Price1"
+                              data-valmsg-for="Prices[${newIndex}].Price1"
                               data-valmsg-replace="true"></span>
                     </div>
                 </div>
                 <div class="col-6">
                     <div class="form-floating mb-3 validation">
-                        <input name="Prices[${priceIndex}].Description" type="text"
+                        <input name="Prices[${newIndex}].Description"
+                               type="text"
                                style="border: 1px solid #F7C9D4;"
-                               class="form-control description-input" placeholder="Описание">
+                               class="form-control description-input"
+                               placeholder="Описание"
+                               data-val="true"
+                               data-val-required="Описание цены - поле обязательное для заполнения"
+                               data-val-length="Описание типа цены не должно превышать 500 символов"
+                               data-val-length-max="500">
                         <label>Описание</label>
                         <span class="text-danger field-validation-valid"
-                              data-valmsg-for="Prices[${priceIndex}].Description"
+                              data-valmsg-for="Prices[${newIndex}].Description"
                               data-valmsg-replace="true"></span>
                     </div>
                 </div>
-                <div class="col-2">
-                    <button type="button" class="btn btn-outline-danger"
-                            onclick="removePriceField('priceRow${priceIndex}')">
+                <div class="col-2 d-flex align-items-center">
+                    <button type="button" class="btn btn-danger btn-sm"
+                            onclick="removePriceField('priceRow${newIndex}')">
                         Удалить
                     </button>
                 </div>
@@ -117,51 +134,50 @@
 
             container.appendChild(row);
 
-            // Переинициализация валидации для всей формы
+            // Переинициализация валидации
             const form = $("form");
-            form.removeData("validator");
-            form.removeData("unobtrusiveValidation");
+            form.removeData("validator").removeData("unobtrusiveValidation");
             $.validator.unobtrusive.parse(form);
-
-            priceIndex++;
         }
 
         function removePriceField(rowId) {
             const row = document.getElementById(rowId);
             if (row) {
                 row.remove();
-                // Переиндексация не требуется, так как мы используем Prices[index]
+
+                // После удаления переиндексируем оставшиеся поля
+                reindexPriceFields();
             }
         }
 
-        document.querySelector('form').addEventListener('submit', function (event) {
-            // Проверяем валидность формы
-            const form = $(this);
-            if (!form.valid()) {
-                event.preventDefault();
-                return false;
-            }
+        function reindexPriceFields() {
+            const rows = document.querySelectorAll('#price-container .price-row');
+            let currentIndex = 0;
 
-            // Собираем все цены (включая первое обязательное поле)
-            const priceRows = document.querySelectorAll('#price-container .price-row');
-            const prices = [];
+            rows.forEach(row => {
+                const inputs = row.querySelectorAll('input[data-val="true"]');
+                const spans = row.querySelectorAll('span[data-valmsg-for]');
 
-            priceRows.forEach((row, index) => {
-                const priceInput = row.querySelector('.price-input');
-                const descInput = row.querySelector('.description-input');
+                // Обновляем индексы в именах полей
+                inputs.forEach(input => {
+                    input.name = input.name.replace(/Prices\[\d+\]/, `Prices[${currentIndex}]`);
+                });
 
-                if (priceInput && descInput) {
-                    prices.push({
-                        Price1: priceInput.value,
-                        Description: descInput.value
-                    });
-                }
+                // Обновляем индексы в сообщениях об ошибках
+                spans.forEach(span => {
+                    span.setAttribute('data-valmsg-for',
+                        span.getAttribute('data-valmsg-for').replace(/Prices\[\d+\]/, `Prices[${currentIndex}]`));
+                });
+
+                // Обновляем ID строки
+                row.id = `priceRow${currentIndex}`;
+
+                currentIndex++;
             });
 
-            // Отправляем данные на сервер
-            document.getElementById('pricesData').value = JSON.stringify(prices);
-
-            return true;
-        });
+            // Обновляем глобальный индекс
+            priceIndex = currentIndex;
+        }
     </script>
+
 }
