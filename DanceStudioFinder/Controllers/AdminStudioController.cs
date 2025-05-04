@@ -3,6 +3,7 @@ using DanceStudioFinder.ViewModels;
 using DanceStudioFinder.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace DanceStudioFinder.Controllers
 {
@@ -13,7 +14,7 @@ namespace DanceStudioFinder.Controllers
         public AdminStudioController(AdminStudioService adminStudioService, OpenStreetMapService openStreetMapsService)
         {
             _adminStudioService = adminStudioService;
-            _openStreetMapsService = openStreetMapsService; 
+            _openStreetMapsService = openStreetMapsService;
         }
 
         /// <summary>
@@ -41,7 +42,7 @@ namespace DanceStudioFinder.Controllers
             {
                 Admin = admin,
                 DanceStudio = adminStudio,
-            }; 
+            };
             return RedirectToAction("Studio", studioViewModel);  //преедача модели в представление с информацией о студии
             //!!!!!!!!!!!!!!!!Здесь измнеить модель представления
         }
@@ -143,9 +144,45 @@ namespace DanceStudioFinder.Controllers
             {
                 Admin = admin,                                 //текущий администратор
                 DanceStudio = adminStudio,                     //студия
-
             };
             return View(viewModel);  //передача модели  представление
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreatePricesStudio(CreatePricesStudioViewModel viewModel, string PricesData)
+        {
+            if (!string.IsNullOrEmpty(PricesData))
+            {
+                var prices = JsonConvert.DeserializeObject<List<Price>>(PricesData);
+                viewModel.Prices = prices;
+            }
+
+            if (viewModel.Prices == null || viewModel.Prices.Count == 0)
+            {
+                ModelState.AddModelError("", "Необходимо добавить хотя бы одну цену");
+                return View(viewModel);
+            }
+
+            try
+            {
+                foreach(var price in viewModel.Prices)
+                {
+                    var result = await _adminStudioService.SavePrice(viewModel.DanceStudio.IdStudio, price);
+                    if (!result)
+                    {
+                        ModelState.AddModelError("price.Price1", "Произошла ошибка при сохранении студии");
+                        return View(viewModel);
+                    }
+                }
+                return RedirectToAction("CreateGroupStudio", new { adminId = viewModel.Admin.IdAdmin });
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Произошла ошибка при сохранении цен");
+                return View(viewModel);
+            }
         }
     }
 }

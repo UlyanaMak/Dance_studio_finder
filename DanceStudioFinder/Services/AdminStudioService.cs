@@ -120,5 +120,28 @@ namespace DanceStudioFinder.Services
             }
 
         }
+
+
+        /// <summary>
+        /// Добавление цены
+        /// </summary>
+        /// <param name="studioId"></param>
+        /// <param name="price"></param>
+        /// <returns></returns>
+        public async Task<bool> SavePrice(int studioId, Price price)
+        {
+            try
+            {
+                price.IdStudio = studioId;
+                await _context.Prices.AddAsync(price);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }

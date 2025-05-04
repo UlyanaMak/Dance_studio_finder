@@ -6,6 +6,7 @@ namespace DanceStudioFinder.ViewModels
     {
         public Admin Admin { get; set; }
         public DanceStudio DanceStudio { get; set; }
-        public List<Price> Prices { get; set;} = new List<Price>();
+        public Price Price { get; set; }
+        public List<Price> Prices { get; set; } = new List<Price> { new Price() };
     }
 }
