@@ -29,7 +29,6 @@
     <form class="needs-validation" novalidate asp-controller="AdminStudio" asp-action="CreatePricesStudio" method="post">
         <input type="hidden" asp-for="Admin.IdAdmin" />  <!--Скрытое поле для сохраненя id админа-->
         <input type="hidden" asp-for="DanceStudio.IdStudio"/>  <!--Скрытое поле для сохраненя инофрмации о студии-->
-        <input type="hidden" id="groupsData" name="GroupsData" />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="container-fluid px-3">
 
@@ -40,15 +39,15 @@
                 <div class="row g-2 align-items-center mb-2 price-row" id="priceRow0">
                     <div class="col-4">
                         <div class="form-floating mb-3 validation">
-                            <input asp-for="Prices[0].Price1" type="text" style="border: 1px solid #F7C9D4;" class="form-control price-input" placeholder="Цена">
-                            <label>Цена</label>
+                            <input asp-for="Prices[0].Price1" type="text" value="" style="border: 1px solid #F7C9D4;" class="form-control price-input" placeholder="Цена">
+                            <label style="color: #BABABA;">Цена</label>
                             <span asp-validation-for="Prices[0].Price1" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="form-floating mb-3 validation">
                             <input asp-for="Prices[0].Description" type="text" style="border: 1px solid #F7C9D4;" class="form-control description-input" placeholder="Описание" >
-                            <label>Описание</label>
+                            <label style="color: #BABABA;">Описание</label>
                             <span asp-validation-for="Prices[0].Description" class="text-danger"></span>
                         </div>
                     </div>
@@ -101,7 +100,7 @@
                                data-val-range-min="0"
                                data-val-range-max="10000"
                                data-val-number="Поле должно содержать числовое значение">
-                        <label>Цена</label>
+                        <label style="color: #BABABA;">Цена</label>
                         <span class="text-danger field-validation-valid"
                               data-valmsg-for="Prices[${newIndex}].Price1"
                               data-valmsg-replace="true"></span>
@@ -118,7 +117,7 @@
                                data-val-required="Описание цены - поле обязательное для заполнения"
                                data-val-length="Описание типа цены не должно превышать 500 символов"
                                data-val-length-max="500">
-                        <label>Описание</label>
+                        <label style="color: #BABABA;">Описание</label>
                         <span class="text-danger field-validation-valid"
                               data-valmsg-for="Prices[${newIndex}].Description"
                               data-valmsg-replace="true"></span>

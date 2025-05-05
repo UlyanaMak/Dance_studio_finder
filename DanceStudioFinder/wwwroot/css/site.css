@@ -53,10 +53,10 @@ header {
         font-family: "Times New Roman",sans-serif;
     }
     header .admin_info {
-        font-family: "Times New Roman", serif; /* Шрифт Times New Roman */
-        font-weight: normal; /* Убираем жирность, делаем текст обычным */
+        font-family: "Times New Roman", serif; 
+        font-weight: normal; 
         font-size: 17px;
-        margin-right: auto; /* Прижимает nav к правому краю */
+        margin-right: auto;
     }
 
 .enter-registration-button {
@@ -92,6 +92,11 @@ header {
 }
 
 .block-right {
+    /*фиксированный правый блок*/
+    position: fixed;
+    top: 80px;
+    right: 0;
+    /*фиксированный правый блок*/
     width: 30%;
     margin-top: 20px;
 }

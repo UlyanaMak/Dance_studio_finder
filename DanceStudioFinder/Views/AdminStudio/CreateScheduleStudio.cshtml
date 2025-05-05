@@ -1,0 +1,177 @@
+﻿@model DanceStudioFinder.ViewModels.CreateScheduleStudioViewModel
+
+@{
+    ViewData["Title"] = "Добавление групп и их расписания";
+}
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Поиск танцевальных студий</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/adminStudio.css" asp-append-version="true" />
+</head>
+
+@section AdminInfo {
+    @($"Администратор: {Model.Admin.Name} {Model.Admin.Surname}")
+    <button type="button" id="deleteAdmin" class="main-button">
+        Удалить администратора
+    </button>
+}
+@section HeaderButtons {
+    <button type="button" id="buttonToSaveChanges" class="main-button">
+        Сохранить
+    </button>
+    <input class="main-button" type="submit" onclick="location.href ='@Url.Action("Index", "Home")'" value="Выйти" />
+}
+
+<body>
+    <form class="needs-validation" novalidate asp-controller="AdminStudio" asp-action="CreateScheduleStudio" method="post">
+        <input type="hidden" asp-for="Admin.IdAdmin" />
+        <input type="hidden" asp-for="DanceStudio.IdStudio" />
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="container-fluid px-3">
+            <span class="field-title">Группы</span>
+            <div id="group-container" class="mb-3">
+                <!-- Первая группа -->
+                <div class="group-row border p-3 rounded mb-3" id="groupRow0">
+                    <div class="form-floating mb-3 validation">
+                        <input asp-for="Groups[0].Name" class="form-control" style="border: 1px solid #F7C9D4;" placeholder="Название группы" required />
+                        <label style="color: #BABABA;">Название группы</label>
+                        <span asp-validation-for="Groups[0].Name" class="text-danger"></span>
+                    </div>
+
+                    <label>Направление</label>
+                    <select name="Groups[0].StyleId" style="border: 1px solid #F7C9D4;" class="form-select mb-3" required>
+                        @foreach (var style in Model.Styles)
+                        {
+                            <option value="@style.IdStyle">
+                                @(style.NameEng != null && style.NameRus != null ? $"{style.NameEng} ({style.NameRus})" : style.NameEng ?? style.NameRus)
+                            </option>
+                        }
+                    </select>
+
+                    <label>Возрастное ограничение</label>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <input asp-for="Groups[0].MinAge" type="text" class="form-control" style="border: 1px solid #F7C9D4;" placeholder="От" />
+                            <label style="color: #BABABA;">От</label>
+                            <span asp-validation-for="Groups[0].MinAge" class="text-danger"></span>
+                            @* <input name="Groups[0].MinAge" class="form-control" placeholder="От" /> *@
+                        </div>
+                        <div class="col">
+                            <input asp-for="Groups[0].MaxAge" type="text" class="form-control" style="border: 1px solid #F7C9D4;" placeholder="До" />
+                            <label style="color: #BABABA;">До</label>
+                            <span asp-validation-for="Groups[0].MaxAge" class="text-danger"></span>
+                            @* <input name="Groups[0].MaxAge" class="form-control" placeholder="До" type="number" /> *@
+                        </div>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <textarea asp-for="Groups[0].Description" class="form-control" style="height: 100px; border: 1px solid #F7C9D4;"></textarea>
+                        <label style="color: #BABABA;">Описание</label>
+                    </div>
+
+                    <div class="schedule-container">
+                        <!-- Расписания будут добавляться сюда -->
+                    </div>
+                    <button type="button" class="btn btn-outline-secondary" onclick="addDayField(this, 0)">+ Добавить день</button>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-outline-primary" onclick="addGroup()">+ Добавить группу</button>
+        </div>
+
+        <button type="submit" id="saveChanges" class="main-button" style="display: none;">Сохранить</button>
+    </form>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+</body>
+
+
+@section Scripts {
+    <script>
+        document.getElementById('buttonToSaveChanges').addEventListener('click', function () {
+            document.getElementById('saveChanges').click();
+        });
+
+        let groupIndex = 1;
+
+        function addGroup() {
+            const container = document.getElementById("group-container");
+            const index = groupIndex++;
+            const group = document.createElement("div");
+            group.className = "group-row border p-3 rounded mb-3";
+            group.id = `groupRow${index}`;
+
+            group.innerHTML = `
+                        <button type="button" class="btn-close float-end" onclick="removeGroup(${index})"></button>
+
+                        <div class="form-floating mb-3 validation">
+                            <input name="Groups[${index}].Name" class="form-control" placeholder="Название группы" required />
+                            <label>Название группы</label>
+                        </div>
+
+                        <label>Направление</label>
+                        <select name="Groups[${index}].StyleId" class="form-select mb-3" required>
+                            ${generateStyleOptions()}
+                        </select>
+
+                        <label>Возрастное ограничение</label>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <input name="Groups[${index}].MinAge" class="form-control" placeholder="От" type="number" />
+                            </div>
+                            <div class="col">
+                                <input name="Groups[${index}].MaxAge" class="form-control" placeholder="До" type="number" />
+                            </div>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <textarea name="Groups[${index}].Description" class="form-control" style="height: 100px;"></textarea>
+                            <label>Описание</label>
+                        </div>
+
+                        <div class="schedule-container"></div>
+                        <button type="button" class="btn btn-outline-secondary" onclick="addDayField(this, ${index})">+ Добавить день</button>
+                    `;
+
+            container.appendChild(group);
+        }
+
+        function removeGroup(index) {
+            const group = document.getElementById(`groupRow${index}`);
+            if (group) group.remove();
+        }
+
+        function generateStyleOptions() {
+            const styles = @Html.Raw(Json.Serialize(Model.Styles));
+            return styles.map(s => `<option value="${s.idStyle}">${s.nameEng ?? ''}${s.nameEng && s.nameRus ? ' (' : ''}${s.nameRus ?? ''}${s.nameEng && s.nameRus ? ')' : ''}</option>`).join('');
+        }
+
+        function addDayField(button, groupIdx) {
+            const container = button.closest('.group-row').querySelector('.schedule-container');
+            const dayIndex = container.children.length;
+
+            const days = @Html.Raw(Json.Serialize(Model.WeekDays));
+            const options = days.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+
+            const row = document.createElement("div");
+            row.className = "d-flex align-items-center mb-2";
+
+            row.innerHTML = `
+                        <select name="Groups[${groupIdx}].Schedule[${dayIndex}].DayOfWeekId" class="form-select me-2" style="width: 25%;">${options}</select>
+                        <input name="Groups[${groupIdx}].Schedule[${dayIndex}].BeginTime" type="time" class="form-control me-2" style="width: 25%;" required />
+                        <input name="Groups[${groupIdx}].Schedule[${dayIndex}].EndTime" type="time" class="form-control me-2" style="width: 25%;" required />
+                        <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">×</button>
+                    `;
+
+            container.appendChild(row);
+        }
+    </script>
+}

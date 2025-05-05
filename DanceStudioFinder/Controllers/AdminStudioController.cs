@@ -4,6 +4,7 @@ using DanceStudioFinder.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 
 namespace DanceStudioFinder.Controllers
 {
@@ -167,7 +168,7 @@ namespace DanceStudioFinder.Controllers
 
             try
             {
-                foreach(var price in viewModel.Prices)
+                foreach (var price in viewModel.Prices)
                 {
                     var result = await _adminStudioService.SavePrice(viewModel.DanceStudio.IdStudio, price);
                     if (!result)
@@ -176,13 +177,58 @@ namespace DanceStudioFinder.Controllers
                         return View(viewModel);
                     }
                 }
-                return RedirectToAction("CreateGroupStudio", new { adminId = viewModel.Admin.IdAdmin });
+                return RedirectToAction("CreateScheduleStudio", new { adminId = viewModel.Admin.IdAdmin });
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Произошла ошибка при сохранении цен");
                 return View(viewModel);
             }
+        }
+
+
+        /// <summary>
+        /// (3) страница создания групп и их расписания в студии
+        /// </summary>
+        /// <param name="adminId"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> CreateScheduleStudio(int adminId)
+        {
+            var admin = await _adminStudioService.FindAdmin(adminId);  //нахождение администратора по id
+            if (admin == null) return NotFound();
+
+            var studio = await _adminStudioService.FindStudio(adminId);
+            var styles = _adminStudioService.GetStyles(); // Получаем стили
+            var days = _adminStudioService.GetWeekDays();  // Дни недели
+            //модель для представления
+            var viewModel = new CreateScheduleStudioViewModel
+            {
+                Admin = admin,
+                DanceStudio = studio,
+                Styles = styles,
+                WeekDays = days
+            };
+            return View(viewModel);  //передача модели  представление
+
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateScheduleStudio(CreateScheduleStudioViewModel viewModel)
+        {
+            return View(viewModel);
+        }
+
+        private string GenerateAgeLimitName(int? min, int? max)
+        {
+            if (min == null && max == null)
+                return "Для всех возрастов";
+            if (min != null && max == null)
+                return $"{min}+";
+            if (min != null && max != null)
+                return $"{min}-{max}";
+            return $"До {max}";
         }
     }
 }
