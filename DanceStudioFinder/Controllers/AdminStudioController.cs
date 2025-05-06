@@ -220,14 +220,6 @@ namespace DanceStudioFinder.Controllers
             var adminStudio = await _adminStudioService.FindStudio(viewModel.Admin.IdAdmin);
             if (adminStudio == null) return NotFound();
             viewModel.DanceStudio = adminStudio;
-            /*ModelState.Remove("DanceStudio");
-            if (!ModelState.IsValid)
-            {
-                //повторная загрузка стилей и дней недели если форма невалидна
-                viewModel.Styles = _adminStudioService.GetStyles();
-                viewModel.WeekDays = _adminStudioService.GetWeekDays();
-                return View(viewModel);
-            }*/
             foreach (var groupVm in viewModel.Groups) //перебор всех существующих групп
             {
                 var ageLimit = _adminStudioService.FindAgeLimits(groupVm.MinAge, groupVm.MaxAge);  //проверка, существует ли данное возрастное ограничение

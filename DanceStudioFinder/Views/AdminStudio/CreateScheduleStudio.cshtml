@@ -116,24 +116,26 @@
             group.className = "group-row border p-3 rounded mb-3 position-relative";
             group.id = `groupRow${index}`;
 
-            /*Отступ у поля направление для крестика*/
-            /*Изменены шрифты у Возрастного ограничения и направления*/
             group.innerHTML = `
-                        <button type="button" class="btn-close position-absolute top-0 end-0 m-2"
-                                onclick="removeGroup(${index})" aria-label="Закрыть"></button>
+                <button type="button" class="btn-close position-absolute top-0 end-0 m-2"
+                        onclick="removeGroup(${index})" aria-label="Закрыть"></button>
 
-                            <div class="form-floating mb-3 validation" style="margin-top: 15px;">
-                            <input name="Groups[${index}].Name" 
-                                   class="form-control"
-                                   style="border: 1px solid #F7C9D4;" 
-                                   placeholder="Название группы"
-                                   data-val-required="Название группы - обязательное поле для ввода"
-                                   data-val-length="Описание типа цены не должно превышать 150 символов"
-                                   data-val-length-max="150"/>
-                            <label style="color: #BABABA;">Название группы</label>
-                        </div>
+                <div class="form-floating mb-3 validation" style="margin-top: 15px;">
+                    <input name="Groups[${index}].Name"
+                           class="form-control"
+                           style="border: 1px solid #F7C9D4;"
+                           placeholder="Название группы"
+                           data-val="true"
+                           data-val-required="Название группы - обязательное поле для ввода"
+                           data-val-length="Название группы должно быть не более 150 символов"
+                           data-val-length-max="150"/>
+                    <label style="color: #BABABA;">Название группы</label>
+                    <span class="text-danger field-validation-valid"
+                          data-valmsg-for="Groups[${index}].Name"
+                          data-valmsg-replace="true"></span>
+                </div>
 
-                        <label>Направление</label>
+                <label>Направление</label>
                         <select name="Groups[${index}].StyleId" class="form-select mb-3"
                                 style="border: 1px solid #F7C9D4; height: 50px;" required>
                             ${generateStyleOptions()}
@@ -166,15 +168,14 @@
                         <div class="schedule-container mb-3"></div>
                         <button type="button" class="btn btn-outline-secondary"
                                 onclick="addDayField(this, ${index})">+ Добавить день</button>
-                    `;
+            `;
 
             container.appendChild(group);
 
-            // Инициализация валидации для новой группы
-            const forms = document.querySelectorAll('form');
-            forms.forEach(form => {
-                $.validator.unobtrusive.parse(form);
-            });
+            // Правильная инициализация валидации
+            const form = $("form");
+            form.removeData("validator").removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
         }
 
         function removeGroup(index) {

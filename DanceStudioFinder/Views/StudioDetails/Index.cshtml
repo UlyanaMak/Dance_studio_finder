@@ -1,6 +1,6 @@
-﻿@model DanceStudioFinder.Models.DanceStudio
+﻿@model DanceStudioFinder.ViewModels.StudioDetailsViewModel
 @{
-    ViewData["Title"] = $"Данные студии '{Model.Name}'";
+    ViewData["Title"] = $"Данные студии '{Model.Studio.Name}'";
 }
 
 <head>
@@ -14,5 +14,92 @@
     <input class="main-button" type="submit" onclick="location.href ='@Url.Action("Index", "Home")'" style="margin-right: 60px;" value="На главную страницу" />
 }
 
+<h2>@Model.Studio.Name</h2>
+
+<!-- Адрес -->
+<div class="mb-4">
+    <h4>Адрес</h4>
+    <p>
+        @Model.Studio.IdAddressNavigation.Entity,
+        @Model.Studio.IdAddressNavigation.Locality,
+        @if (!string.IsNullOrEmpty(Model.Studio.IdAddressNavigation.SettlementArea))
+        {
+            @($"{Model.Studio.IdAddressNavigation.SettlementArea}, ")
+        }
+        ул. @Model.Studio.IdAddressNavigation.Street,
+        д. @Model.Studio.IdAddressNavigation.BuildingNumber
+        @if (!string.IsNullOrEmpty(Model.Studio.IdAddressNavigation.Letter))
+        {
+            @($" литера {Model.Studio.IdAddressNavigation.Letter}")
+        }
+    </p>
+</div>
+
+<!-- Контакты -->
+<div class="mb-4">
+    <h4>Контакты</h4>
+    <p>Телефон: +7 (@Model.Studio.PhoneNumber.Substring(0, 3)) @Model.Studio.PhoneNumber.Substring(3, 3)-@Model.Studio.PhoneNumber.Substring(6, 2)-@Model.Studio.PhoneNumber.Substring(8)</p>
+    @if (!string.IsNullOrEmpty(Model.Studio.ExtraPhoneNumber))
+    {
+        <p>Доп. телефон: +7 (@Model.Studio.ExtraPhoneNumber.Substring(0, 3)) @Model.Studio.ExtraPhoneNumber.Substring(3, 3)-@Model.Studio.ExtraPhoneNumber.Substring(6, 2)-@Model.Studio.ExtraPhoneNumber.Substring(8)</p>
+    }
+    @if (!string.IsNullOrEmpty(Model.Studio.VkGroup))
+    {
+        <p>ВКонтакте: <a href="@Model.Studio.VkGroup" target="_blank">@Model.Studio.VkGroup</a></p>
+    }
+    @if (!string.IsNullOrEmpty(Model.Studio.Telegram))
+    {
+        <p>Telegram: <a href="@Model.Studio.Telegram" target="_blank">@Model.Studio.Telegram</a></p>
+    }
+    @if (!string.IsNullOrEmpty(Model.Studio.Website))
+    {
+        <p>Сайт: <a href="@Model.Studio.Website" target="_blank">@Model.Studio.Website</a></p>
+    }
+</div>
+
+<!-- Группы -->
+<h3>Группы</h3>
+@foreach (var group in Model.Groups)
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">@group.Name</h5>
+            <p class="card-text">@group.Description</p>
+            <p><strong>Направление:</strong> @(group.Style.NameRus ?? group.Style.NameEng)</p>
+            <p><strong>Возраст:</strong> @group.AgeLimit.MinAge - @group.AgeLimit.MaxAge лет</p>
+
+            <h6>Расписание</h6>
+            <ul>
+                @foreach (var schedule in group.Schedule.OrderBy(s => s.Day.IdDay))
+                {
+                    <li>
+                        <strong>@schedule.Day.Name:</strong>
+                        @schedule.BeginTime.ToString("HH\\:mm") - @schedule.EndTime.ToString("HH\\:mm")
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}
+
+<!-- Цены -->
+<h3>Цены</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Описание</th>
+            <th>Стоимость (₽)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var price in Model.Prices)
+        {
+            <tr>
+                <td>@price.Description</td>
+                <td>@price.Price1</td>
+            </tr>
+        }
+    </tbody>
+</table>
 
 
