@@ -217,7 +217,56 @@ namespace DanceStudioFinder.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateScheduleStudio(CreateScheduleStudioViewModel viewModel)
         {
-            return View(viewModel);
+            var adminStudio = await _adminStudioService.FindStudio(viewModel.Admin.IdAdmin);
+            if (adminStudio == null) return NotFound();
+            viewModel.DanceStudio = adminStudio;
+
+            if (!ModelState.IsValid)
+            {
+                //повторная загрузка стилей и дней недели если форма невалидна
+                viewModel.Styles = _adminStudioService.GetStyles();
+                viewModel.WeekDays = _adminStudioService.GetWeekDays();
+                return View(viewModel);
+            }
+            foreach (var groupVm in viewModel.Groups) //перебор всех существующих групп
+            {
+                var ageLimit = _adminStudioService.FindAgeLimits(groupVm.MinAge, groupVm.MaxAge);  //проверка, существует ли данное возрастное ограничение
+                if (ageLimit == null)
+                {
+                    ageLimit = new AgeLimit
+                    {
+                        MinAge = groupVm.MinAge,
+                        MaxAge = groupVm.MaxAge,
+                        Name = GenerateAgeLimitName(groupVm.MinAge, groupVm.MaxAge)
+                    };
+                    await _adminStudioService.SaveAgeLimit(ageLimit);
+                }
+
+                var group = new DanceGroup
+                {
+                    Name = groupVm.Name,
+                    IdStyle = groupVm.StyleId,
+                    IdStudio = viewModel.DanceStudio.IdStudio,
+                    IdAgeLimit = ageLimit.IdAgeLimit,
+                    Description = groupVm.Description,
+                };
+
+                await _adminStudioService.SaveGroup(group);
+
+                foreach (var scheduleVm in groupVm.Schedule)
+                {
+                    var schedule = new Schedule
+                    {
+                        IdGroup = group.IdGroup,
+                        IdDay = scheduleVm.DayOfWeekId,
+                        BeginTime = scheduleVm.BeginTime,
+                        EndTime = scheduleVm.EndTime
+                    };
+                    await _adminStudioService.SaveSchedule(schedule);
+                }
+            }
+            TempData["Success"] = "Группы и расписание успешно добавлены.";
+            return RedirectToAction("Index", "AdminStudio");
         }
 
         private string GenerateAgeLimitName(int? min, int? max)

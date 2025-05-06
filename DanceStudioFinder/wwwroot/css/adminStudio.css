@@ -17,6 +17,11 @@
     color: #F7C9D4;
 }
 
+.btn-outline-secondary {
+    border: 1px solid #F7C9D4;
+    color: #F7C9D4;
+}
+
 #groupsContainer .btn {
     position: relative;
     padding-right: 30px;

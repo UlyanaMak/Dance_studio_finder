@@ -143,5 +143,37 @@ namespace DanceStudioFinder.Services
                 return false;
             }
         }
+
+        public AgeLimit? FindAgeLimits(int? minAge, int? maxAge)
+        {
+            return _context.AgeLimits.FirstOrDefault(al => al.MinAge == minAge && al.MaxAge == maxAge);
+        }
+
+        public async Task<bool> SaveAgeLimit(AgeLimit ageLimit)
+        {
+            try
+            {
+                _context.AgeLimits.Add(ageLimit);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task SaveGroup(DanceGroup group)
+        {
+            _context.DanceGroups.Add(group);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task SaveSchedule(Schedule schedule)
+        {
+            _context.Schedules.Add(schedule);
+            await _context.SaveChangesAsync();
+        }
     }
 }
