@@ -37,12 +37,15 @@
             <div id="group-container" class="mb-3">
                 <!-- Первая группа -->
                 <div class="group-row border p-3 rounded mb-3" id="groupRow0">
+
+                    <!--Название группы-->
                     <div class="form-floating mb-3 validation">
                         <input asp-for="Groups[0].Name" class="form-control" style="border: 1px solid #F7C9D4;" placeholder="Название группы" required />
                         <label style="color: #BABABA;">Название группы</label>
                         <span asp-validation-for="Groups[0].Name" class="text-danger"></span>
                     </div>
 
+                    <!--Танцевальное направление-->
                     <label>Направление</label>
                     <select name="Groups[0].StyleId" style="border: 1px solid #F7C9D4;" class="form-select mb-3" required>
                         @foreach (var style in Model.Styles)
@@ -53,20 +56,8 @@
                         }
                     </select>
 
-                    @* <label>Возрастное ограничение</label>
-                    <div class="row mb-3">
-                        <div class="form-floating mb-3 validation">
-                            <input asp-for="Groups[0].MinAge" type="text" class="form-control" style="border: 1px solid #F7C9D4;" placeholder="От" />
-                            <label style="color: #BABABA;">От</label>
-                            <span asp-validation-for="Groups[0].MinAge" class="text-danger"></span>
-                        </div>
-                        <div class="form-floating mb-3 validation">
-                            <input asp-for="Groups[0].MaxAge" type="text" class="form-control" style="border: 1px solid #F7C9D4;" placeholder="До" />
-                            <label style="color: #BABABA;">До</label>
-                            <span asp-validation-for="Groups[0].MaxAge" class="text-danger"></span>
-                        </div>
-                    </div> *@
-
+                    <!--Возрастное ограничение группы-->
+                    <label>Возрастное ограничение</label>
                     <div class="row mb-3">
                         <div class="col">
                             <div class="form-floating">
@@ -84,6 +75,7 @@
                         </div>
                     </div>
 
+                    <!--Описание группы-->
                     <div class="form-floating mb-3">
                         <textarea asp-for="Groups[0].Description" class="form-control" style="height: 100px; border: 1px solid #F7C9D4;"></textarea>
                         <label style="color: #BABABA;">Описание</label>
@@ -189,7 +181,75 @@
             const group = document.getElementById(`groupRow${index}`);
             if (group && confirm('Вы уверены, что хотите удалить эту группу?')) {
                 group.remove();
+                renumberGroups();
             }
+        }
+
+        function renumberGroups() {
+            const groupContainer = document.getElementById("group-container");
+            const groups = groupContainer.querySelectorAll('.group-row');
+
+            groups.forEach((group, newIndex) => {
+                group.id = `groupRow${newIndex}`;
+
+                // Название группы
+                const nameInput = group.querySelector('input[name$=".Name"]');
+                if (nameInput) nameInput.name = `Groups[${newIndex}].Name`;
+
+                // Направление (select)
+                const styleSelect = group.querySelector('select[name$=".StyleId"]');
+                if (styleSelect) styleSelect.name = `Groups[${newIndex}].StyleId`;
+
+                // Возраст
+                const minAge = group.querySelector('input[name$=".MinAge"]');
+                const maxAge = group.querySelector('input[name$=".MaxAge"]');
+                if (minAge) minAge.name = `Groups[${newIndex}].MinAge`;
+                if (maxAge) maxAge.name = `Groups[${newIndex}].MaxAge`;
+
+                // Описание
+                const description = group.querySelector('textarea[name$=".Description"]');
+                if (description) description.name = `Groups[${newIndex}].Description`;
+
+                // Расписание
+                const scheduleContainer = group.querySelector('.schedule-container');
+                const scheduleRows = scheduleContainer?.children ?? [];
+                for (let i = 0; i < scheduleRows.length; i++) {
+                    const row = scheduleRows[i];
+                    const selects = row.querySelectorAll('select, input');
+                    selects.forEach(input => {
+                        if (input.name.includes('.DayOfWeekId')) {
+                            input.name = `Groups[${newIndex}].Schedule[${i}].DayOfWeekId`;
+                        }
+                        if (input.name.includes('.BeginTime')) {
+                            input.name = `Groups[${newIndex}].Schedule[${i}].BeginTime`;
+                        }
+                        if (input.name.includes('.EndTime')) {
+                            input.name = `Groups[${newIndex}].Schedule[${i}].EndTime`;
+                        }
+                    });
+                }
+
+                // Обновим onclick на кнопке удаления расписания
+                const scheduleButtons = group.querySelectorAll('.schedule-container button');
+                scheduleButtons.forEach(btn => {
+                    btn.setAttribute('onclick', `this.parentElement.remove(); renumberSchedule(this.closest('.group-row'));`);
+                });
+
+                // Обновим onclick на кнопке "+ Добавить день"
+                const addDayBtn = group.querySelector('button.btn-outline-secondary');
+                if (addDayBtn) {
+                    addDayBtn.setAttribute('onclick', `addDayField(this, ${newIndex})`);
+                }
+
+                // Обновим кнопку удаления группы
+                const closeBtn = group.querySelector('button.btn-close');
+                if (closeBtn) {
+                    closeBtn.setAttribute('onclick', `removeGroup(${newIndex})`);
+                }
+            });
+
+            // Обновим глобальный groupIndex
+            groupIndex = groups.length;
         }
 
         function generateStyleOptions() {
@@ -203,29 +263,64 @@
 
         function addDayField(button, groupIdx) {
             const container = button.closest('.group-row').querySelector('.schedule-container');
-            const dayIndex = container.children.length;
-
-            const days = @Html.Raw(Json.Serialize(Model.WeekDays));
-            const options = days.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+            const newIndex = container.children.length; // Новый индекс = количество существующих элементов
 
             const row = document.createElement("div");
             row.className = "d-flex align-items-center mb-2";
-
             row.innerHTML = `
-                        <select name="Groups[${groupIdx}].Schedule[${dayIndex}].DayOfWeekId"
-                                class="form-select me-2" style="width: 25%; border: 1px solid #F7C9D4;">
-                            ${options}
-                        </select>
-                        <input name="Groups[${groupIdx}].Schedule[${dayIndex}].BeginTime" type="time"
-                               class="form-control me-2" style="width: 25%; border: 1px solid #F7C9D4;" required />
-                        <input name="Groups[${groupIdx}].Schedule[${dayIndex}].EndTime" type="time"
-                               class="form-control me-2" style="width: 25%; border: 1px solid #F7C9D4;" required />
-                        <button type="button" class="btn btn-danger"
-                                style="border: 1px solid #F7C9D4; background-color: #ffe1e6; color: black;"
-                                onclick="this.parentElement.remove()">Удалить</button>
-                    `;
+                <select name="Groups[${groupIdx}].Schedule[${newIndex}].DayOfWeekId"
+                        class="form-select me-2" style="width: 25%; border: 1px solid #F7C9D4;" required>
+                    ${generateWeekDayOptions()}
+                </select>
+
+                <input name="Groups[${groupIdx}].Schedule[${newIndex}].BeginTime" type="time"
+                       class="form-control me-2" style="width: 25%; border: 1px solid #F7C9D4;" required />
+                <input name="Groups[${groupIdx}].Schedule[${newIndex}].EndTime" type="time"
+                       class="form-control me-2" style="width: 25%; border: 1px solid #F7C9D4;" required />
+                <button type="button" class="btn btn-danger"
+                        onclick="this.parentElement.remove()">Удалить</button>
+            `;
 
             container.appendChild(row);
         }
+
+        function generateWeekDayOptions() {
+            const weekDays = @Html.Raw(Json.Serialize(Model.WeekDays));
+            return weekDays.map(d =>
+                `<option value="${d.idDay}">${d.name}</option>`
+            ).join('');
+        }
+
+        function removeDayField(button, groupIdx) {
+            const row = button.closest('div');
+            row.remove();
+            reindexDayFields(groupIdx); // Переиндексация после удаления
+        }
+
+        function reindexDayFields(groupIdx) {
+            const container = document.querySelector(`#groupRow${groupIdx} .schedule-container`);
+            const rows = container.querySelectorAll('div.d-flex');
+
+            rows.forEach((row, index) => {
+                const selects = row.querySelectorAll('select');
+                const inputs = row.querySelectorAll('input');
+
+                // Обновляем индексы в name
+                selects.forEach(select => {
+                    select.name = select.name.replace(
+                        /Groups\[\d+\]\.Schedule\[\d+\]/,
+                        `Groups[${groupIdx}].Schedule[${index}]`
+                    );
+                });
+
+                inputs.forEach(input => {
+                    input.name = input.name.replace(
+                        /Groups\[\d+\]\.Schedule\[\d+\]/,
+                        `Groups[${groupIdx}].Schedule[${index}]`
+                    );
+                });
+            });
+        }
+
     </script>
 }
