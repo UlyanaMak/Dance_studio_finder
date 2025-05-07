@@ -55,7 +55,9 @@ namespace DanceStudioFinder.Controllers
                         EndTime = s.EndTime
                     }).ToList()
                 }).ToList(),
-                Prices = studio.Prices.ToList()
+                Prices = studio.Prices.ToList(),
+                WeekDays = _context.WeekDays.ToList(),  //выгрузка дней недели из БД
+                Styles = _context.Styles.OrderBy(s => s.IdStyle).ToList()  //выгрузка стилей из БД
             };
 
             return View(viewModel);

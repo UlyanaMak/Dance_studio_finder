@@ -7,6 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/infoPage.css" asp-append-version="true" />
 </head>
 
 @section HeaderButtons {
@@ -14,92 +15,143 @@
     <input class="main-button" type="submit" onclick="location.href ='@Url.Action("Index", "Home")'" style="margin-right: 60px;" value="На главную страницу" />
 }
 
-<h2>@Model.Studio.Name</h2>
+<div class="studio-container">
+    <h2 class="studio-name">@Model.Studio.Name</h2>
 
-<!-- Адрес -->
-<div class="mb-4">
-    <h4>Адрес</h4>
-    <p>
-        @Model.Studio.IdAddressNavigation.Entity,
-        @Model.Studio.IdAddressNavigation.Locality,
-        @if (!string.IsNullOrEmpty(Model.Studio.IdAddressNavigation.SettlementArea))
-        {
-            @($"{Model.Studio.IdAddressNavigation.SettlementArea}, ")
-        }
-        ул. @Model.Studio.IdAddressNavigation.Street,
-        д. @Model.Studio.IdAddressNavigation.BuildingNumber
-        @if (!string.IsNullOrEmpty(Model.Studio.IdAddressNavigation.Letter))
-        {
-            @($" литера {Model.Studio.IdAddressNavigation.Letter}")
-        }
-    </p>
-</div>
-
-<!-- Контакты -->
-<div class="mb-4">
-    <h4>Контакты</h4>
-    <p>Телефон: +7 (@Model.Studio.PhoneNumber.Substring(0, 3)) @Model.Studio.PhoneNumber.Substring(3, 3)-@Model.Studio.PhoneNumber.Substring(6, 2)-@Model.Studio.PhoneNumber.Substring(8)</p>
-    @if (!string.IsNullOrEmpty(Model.Studio.ExtraPhoneNumber))
-    {
-        <p>Доп. телефон: +7 (@Model.Studio.ExtraPhoneNumber.Substring(0, 3)) @Model.Studio.ExtraPhoneNumber.Substring(3, 3)-@Model.Studio.ExtraPhoneNumber.Substring(6, 2)-@Model.Studio.ExtraPhoneNumber.Substring(8)</p>
-    }
-    @if (!string.IsNullOrEmpty(Model.Studio.VkGroup))
-    {
-        <p>ВКонтакте: <a href="@Model.Studio.VkGroup" target="_blank">@Model.Studio.VkGroup</a></p>
-    }
-    @if (!string.IsNullOrEmpty(Model.Studio.Telegram))
-    {
-        <p>Telegram: <a href="@Model.Studio.Telegram" target="_blank">@Model.Studio.Telegram</a></p>
-    }
-    @if (!string.IsNullOrEmpty(Model.Studio.Website))
-    {
-        <p>Сайт: <a href="@Model.Studio.Website" target="_blank">@Model.Studio.Website</a></p>
-    }
-</div>
-
-<!-- Группы -->
-<h3>Группы</h3>
-@foreach (var group in Model.Groups)
-{
-    <div class="card mb-3">
-        <div class="card-body">
-            <h5 class="card-title">@group.Name</h5>
-            <p class="card-text">@group.Description</p>
-            <p><strong>Направление:</strong> @(group.Style.NameRus ?? group.Style.NameEng)</p>
-            <p><strong>Возраст:</strong> @group.AgeLimit.MinAge - @group.AgeLimit.MaxAge лет</p>
-
-            <h6>Расписание</h6>
-            <ul>
-                @foreach (var schedule in group.Schedule.OrderBy(s => s.Day.IdDay))
-                {
-                    <li>
-                        <strong>@schedule.Day.Name:</strong>
-                        @schedule.BeginTime.ToString("HH\\:mm") - @schedule.EndTime.ToString("HH\\:mm")
-                    </li>
-                }
-            </ul>
-        </div>
+    <!-- Адрес -->
+    <div class="mb-4">
+        <p class="studio-address">
+            @Model.Studio.IdAddressNavigation.Entity,
+            @Model.Studio.IdAddressNavigation.Locality,
+            @if (!string.IsNullOrEmpty(Model.Studio.IdAddressNavigation.SettlementArea))
+            {
+                @($"{Model.Studio.IdAddressNavigation.SettlementArea}, ")
+            }
+            ул. @Model.Studio.IdAddressNavigation.Street,
+            @Model.Studio.IdAddressNavigation.BuildingNumber
+            @if (!string.IsNullOrEmpty(Model.Studio.IdAddressNavigation.Letter))
+            {
+                @Model.Studio.IdAddressNavigation.Letter
+            }
+        </p>
     </div>
-}
 
-<!-- Цены -->
-<h3>Цены</h3>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Описание</th>
-            <th>Стоимость (₽)</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var price in Model.Prices)
+    <hr style="border: 1px solid #F2FCC6; margin-bottom: 10px; margin-top: 10px" />
+
+    <!-- Контакты -->
+    <div class="mb-4">
+        <p class="phone-number">+7 (@Model.Studio.PhoneNumber.Substring(0, 3)) @Model.Studio.PhoneNumber.Substring(3, 3)-@Model.Studio.PhoneNumber.Substring(6, 2)-@Model.Studio.PhoneNumber.Substring(8)</p>
+        @if (!string.IsNullOrEmpty(Model.Studio.ExtraPhoneNumber))
         {
-            <tr>
-                <td>@price.Description</td>
-                <td>@price.Price1</td>
-            </tr>
+            <p class="phone-number">+7 (@Model.Studio.ExtraPhoneNumber.Substring(0, 3)) @Model.Studio.ExtraPhoneNumber.Substring(3, 3)-@Model.Studio.ExtraPhoneNumber.Substring(6, 2)-@Model.Studio.ExtraPhoneNumber.Substring(8)</p>
         }
-    </tbody>
-</table>
+
+        @if (!string.IsNullOrEmpty(Model.Studio.VkGroup) || !string.IsNullOrEmpty(Model.Studio.Telegram) || !string.IsNullOrEmpty(Model.Studio.Website))
+        {
+            @* <h3 class="field-label">Ссылки на социальные сети</h3> *@
+            @if (!string.IsNullOrEmpty(Model.Studio.VkGroup))
+            {
+                <p class="link">ВКонтакте: <a href="@Model.Studio.VkGroup" target="_blank">@Model.Studio.VkGroup</a></p>
+            }
+            @if (!string.IsNullOrEmpty(Model.Studio.Telegram))
+            {
+                <p class="link">Telegram: <a href="@Model.Studio.Telegram" target="_blank">@Model.Studio.Telegram</a></p>
+            }
+            @if (!string.IsNullOrEmpty(Model.Studio.Website))
+            {
+                <p class="link">Сайт: <a href="@Model.Studio.Website" target="_blank">@Model.Studio.Website</a></p>
+            }
+        }
+    </div>
+
+    <hr style="border: 1px solid #F2FCC6; margin-bottom: 10px; margin-top: 10px" />
+
+    <!-- Цены -->
+    <h3 class="field-label">Цены</h3>
+
+    @{
+
+        if (Model != null && Model.Prices.Any())
+        {
+            foreach (var price in Model.Prices)
+            {
+                <div class="price-item">
+                    <span class="price-description">@price.Description</span>
+                    @if (price.Price1 == 0)
+                    {
+                        <span class="price-value">бесплатно</span>
+                    }
+                    else
+                    {
+                        <span class="price-value">@price.Price1</span>
+                    }
+                </div>
+            }
+        }
+    }
+
+
+    <hr style="border: 1px solid #F2FCC6; margin-bottom: 10px; margin-top: 10px" />
+
+    <!-- Группы -->
+    @{
+        var allTimes = Model.Groups  //все отрезки времени
+        .SelectMany(g => g.Schedule)
+        .Select(s => new { Start = s.BeginTime, End = s.EndTime })
+        .Distinct()
+        .OrderBy(t => t.Start)
+        .ToList();
+
+        var weekDays = Model.WeekDays.OrderBy(d => d.IdDay).ToList(); //извлечение дней недели из БД
+    }
+    <h3 class="field-label mb-4">Расписание групповых занятий</h3>
+
+    <div class="table-responsive">
+        <table class="table table-bordered text-center align-middle schedule-table" style="margin-top: 10px;">
+            <thead class="table-primary">
+                <tr>
+                    <th class="time-column">Время</th>
+                    @foreach (var day in weekDays)
+                    {
+                        <th class="day-header">@day.Name</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var timeSlot in allTimes)
+                {
+                    <tr>
+                        <td class="time-slot bg-light fw-bold">
+                            @timeSlot.Start.ToString("HH:mm") – @timeSlot.End.ToString("HH:mm")
+                        </td>
+
+                        @foreach (var day in weekDays)
+                        {
+                            var groupsInSlot = Model.Groups
+                            .Where(g => g.Schedule.Any(s =>
+                            s.Day.IdDay == day.IdDay &&
+                            s.BeginTime == timeSlot.Start &&
+                            s.EndTime == timeSlot.End))
+                            .ToList();
+
+                            <td class="schedule-cell">
+                                @foreach (var group in groupsInSlot)
+                                {
+                                    <div class="border rounded p-1 mb-1 bg-light" style="text-align: center !important;">
+                                        <strong class="d-block">@group.Name</strong><br/>
+                                        <span class="text-muted small">@(group.Style.NameEng != null && group.Style.NameRus != null ? $"{group.Style.NameEng} ({group.Style.NameRus})" : group.Style.NameEng ?? group.Style.NameRus)</span><br />
+                                        <small class="d-block text-info">@group.AgeLimit.Name</small><br />
+                                    </div>
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
 
 
