@@ -14,7 +14,7 @@ builder.Services.AddScoped<IPasswordHasher<Admin>, PasswordHasher<Admin>>();
 builder.Services.AddScoped<AdminStudioService>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<OpenStreetMapService>();
-
+builder.Services.AddScoped<InfoAdminStudioService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

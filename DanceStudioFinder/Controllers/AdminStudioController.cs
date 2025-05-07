@@ -39,12 +39,14 @@ namespace DanceStudioFinder.Controllers
 
             //!!!!!!!!!!!!!!!!Здесь измнеить модель представления
             //если студия есть
-            var studioViewModel = new CreateAddressStudioViewModel  //создаем модель для представления информации о студии
+            /*var studioViewModel = new CreateAddressStudioViewModel  //создаем модель для представления информации о студии
             {
                 Admin = admin,
                 DanceStudio = adminStudio,
-            };
-            return RedirectToAction("Studio", studioViewModel);  //преедача модели в представление с информацией о студии
+            };*/
+            //return RedirectToAction("Studio", studioViewModel);  //преедача модели в представление с информацией о студии
+            //если студия есть
+            return RedirectToAction("Index", "InfoAdminStudio", new { adminId = admin.IdAdmin });  //перенаправление на страницу студии админа
             //!!!!!!!!!!!!!!!!Здесь измнеить модель представления
         }
 
@@ -257,8 +259,9 @@ namespace DanceStudioFinder.Controllers
                     await _adminStudioService.SaveSchedule(schedule);
                 }
             }
-            TempData["Success"] = "Группы и расписание успешно добавлены.";
-            return RedirectToAction("Index", "AdminStudio");
+            /*TempData["Success"] = "Группы и расписание успешно добавлены.";*/
+            //студия создана
+            return RedirectToAction("Index", "InfoAdminStudio", new { adminId = viewModel.Admin.IdAdmin });  //перенаправление на страницу студии админа        !!!!!!!!!!!!!!!!!!!!
         }
 
         private string GenerateAgeLimitName(int? min, int? max)
