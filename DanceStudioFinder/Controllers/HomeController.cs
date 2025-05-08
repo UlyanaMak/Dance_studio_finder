@@ -49,6 +49,7 @@ namespace DanceStudioFinder.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Index(StudioFilterModel filter)
         {
+            //згрузка списка всех студий БД
             var danceStudios = _context.DanceStudios
                 .Include(ds => ds.IdAddressNavigation)
                 .Include(ds => ds.Prices)
@@ -58,9 +59,9 @@ namespace DanceStudioFinder.Controllers
                     .ThenInclude(group => group.IdStyleNavigation)
                 .AsQueryable();
 
-            // Применяем фильтры
+            //применением фильтров
             danceStudios = ApplyFilters(danceStudios, filter);
-
+            //отфильтрованная модель для представления
             var filteredViewModel = new UserViewModel
             {
                 DanceStudios = danceStudios.ToList(),
@@ -75,69 +76,73 @@ namespace DanceStudioFinder.Controllers
             return View(filteredViewModel);
         }
 
-
+        /// <summary>
+        /// Применение фильтров
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="filter">фильтры</param>
+        /// <returns></returns>
         private IQueryable<DanceStudio> ApplyFilters(IQueryable<DanceStudio> query, StudioFilterModel filter)
         {
-            // Фильтрация по названию
+            //фильтрация по названию
             if (!string.IsNullOrWhiteSpace(filter.Name))
             {
                 query = query.Where(s => s.Name.Contains(filter.Name));
             }
 
-            // Фильтрация по адресу
+            //фильтрация по адресу
             if (!string.IsNullOrWhiteSpace(filter.Locality))
             {
-                query = query.Where(s => s.IdAddressNavigation.Locality.Contains(filter.Locality));
+                query = query.Where(s => s.IdAddressNavigation.Locality.Contains(filter.Locality));  //населённый пункт
             }
 
             if (!string.IsNullOrWhiteSpace(filter.SettlementArea))
             {
-                query = query.Where(s => s.IdAddressNavigation.SettlementArea.Contains(filter.SettlementArea));
+                query = query.Where(s => s.IdAddressNavigation.SettlementArea.Contains(filter.SettlementArea));  //район
             }
 
             if (!string.IsNullOrWhiteSpace(filter.Street))
             {
-                query = query.Where(s => s.IdAddressNavigation.Street.Contains(filter.Street));
+                query = query.Where(s => s.IdAddressNavigation.Street.Contains(filter.Street));  //улица
             }
 
-            // Фильтрация по стилю - для каждой группы танцев
+            //фильтрация по стилю - для каждой группы танцев
             if (!string.IsNullOrWhiteSpace(filter.Style))
             {
                 var styleId = int.Parse(filter.Style);
-                query = query.Where(s => s.DanceGroups.Any(g => g.IdStyle == styleId));
+                query = query.Where(s => s.DanceGroups.Any(g => g.IdStyle == styleId));  
             }
 
-            // Фильтрация по цене
+            //фильтрация по цене (максимальная доступная для пользователя цена)
             if (filter.MaxPrice.HasValue)
             {
-                query = query.Where(s => s.Prices.Any(p => p.Price1 <= filter.MaxPrice.Value));
+                query = query.Where(s => s.Prices.Any() && s.Prices.Max(p => p.Price1) <= filter.MaxPrice.Value);
             }
 
-            // Фильтрация по времени занятий
-            if (filter.BeginTime.HasValue)
+            //фильтрация по времени занятий
+            if (filter.BeginTime.HasValue)  //начало
             {
                 query = query.Where(s => s.DanceGroups.Any(g =>
                     g.Schedules.Any(sc => sc.BeginTime >= filter.BeginTime.Value)));
             }
 
-            if (filter.EndTime.HasValue)
+            if (filter.EndTime.HasValue)  //окончание
             {
                 query = query.Where(s => s.DanceGroups.Any(g =>
                     g.Schedules.Any(sc => sc.EndTime <= filter.EndTime.Value)));
             }
 
-            // Фильтрация по возрасту (если реализовано в модели данных)
+            //фильтрация по возрасту
             if (filter.Age.HasValue)
             {
+                int age = filter.Age.Value;
                 query = query.Where(s => s.DanceGroups.Any(g =>
-                    g.IdAgeLimitNavigation.MinAge <= filter.Age.Value &&
-                    g.IdAgeLimitNavigation.MaxAge >= filter.Age.Value));
+                    (!g.IdAgeLimitNavigation.MinAge.HasValue || g.IdAgeLimitNavigation.MinAge.Value <= age) &&
+                    (!g.IdAgeLimitNavigation.MaxAge.HasValue || g.IdAgeLimitNavigation.MaxAge.Value >= age)
+                ));
             }
-
             return query;
         }
-
-
 
 
         [HttpGet]
@@ -164,7 +169,8 @@ namespace DanceStudioFinder.Controllers
         {
             ModelState.Remove("Login");  //удалить проверку входа
             ModelState.Remove("DanceStudios");  //удалить проверку танцевальных студий
-            
+            ModelState.Remove("StudioFilter");  //удалить модель для фильтрации
+
             if (!ModelState.IsValid)  //если не пройдена валидация
             {
                 model.DanceStudios = _context.DanceStudios.ToList();  //список студий
@@ -205,6 +211,7 @@ namespace DanceStudioFinder.Controllers
         {
             ModelState.Remove("Register");  //удалить проверку регистрации
             ModelState.Remove("DanceStudios");  //удалить проверку танцевальных студий
+            ModelState.Remove("StudioFilter");  //удалить модель для фильтрации
 
             if (!ModelState.IsValid)
             {

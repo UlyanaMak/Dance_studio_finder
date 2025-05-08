@@ -20,7 +20,7 @@ namespace DanceStudioFinder.Models
         public string? Street { get; set; }
 
         public string? Style { get; set; }
-        public List<Style> Styles { get; set; } = new List<Style>();
+        public List<Style?> Styles { get; set; } = new List<Style>();
 
         public TimeOnly? BeginTime { get; set; }
         public TimeOnly? EndTime { get; set; }
