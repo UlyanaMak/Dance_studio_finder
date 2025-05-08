@@ -99,6 +99,7 @@ namespace DanceStudioFinder.Controllers
 
             viewModel.DanceStudio.IdAddress = addressIndex;
             viewModel.DanceStudio.IdAdmin = admin.IdAdmin;
+            
             ModelState.Remove("DanceStudio.IdAddressNavigation");
             ModelState.Remove("DanceStudio.IdAdminNavigation");
 

@@ -14,9 +14,9 @@
 
 @section AdminInfo {
     @($"Администратор: {Model.Admin.Name} {Model.Admin.Surname}")
-    <button type="button" id="deleteAdmin" class="main-button">
+    @* <button type="button" id="deleteAdmin" class="main-button">
         Удалить администратора
-    </button>
+    </button> *@
 }
 @section HeaderButtons {
     <!--Кнопка сохранения, нажимает сохранение в форме-->
@@ -29,6 +29,9 @@
 <body>
     <form class="needs-validation" novalidate asp-controller="AdminStudio" asp-action="CreateAddressStudio" method="post">
         <input type="hidden" asp-for="Admin.IdAdmin" />
+        <input type="hidden" asp-for="Admin.Name" />
+        <input type="hidden" asp-for="Admin.Surname" />
+        <input type="hidden" asp-for="Admin.Email" />
         <input type="hidden" id="groupsData" name="GroupsData" />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="container-fluid px-3">
