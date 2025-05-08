@@ -12,9 +12,14 @@
 </head>
 
 @section AdminInfo {
+
     @($"Администратор: {Model.Name} {Model.Surname}")
+
+    <button type="button" id="update" class="main-button" data-bs-toggle="modal" data-bs-target="#editAdminModal">
+        Редактировать
+    </button>
     <button type="button" id="deleteAdmin" class="main-button">
-        Удалить администратора
+        Удалить
     </button>
 }
 
@@ -27,3 +32,80 @@
     <input class="main-button" type="submit" onclick="location.href ='@Url.Action("Index", "Home")'" value="Выйти" />
 }
 
+<!-- Модальное окно редактирования администратора -->
+<div class="modal fade" id="editAdminModal" tabindex="-1" aria-labelledby="editAdminLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            
+            <form method="post" asp-action="UpdateAdmin" asp-controller="InfoAdminStudio">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editAdminLabel">Редактирование администратора</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="IdAdmin" value="@Model.IdAdmin" />
+
+                    <div class="form-floating mb-3 validation">
+                        <input asp-for="Name" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="nameInput" placeholder="Имя">
+                        <label for="floatingInput" style="color: #BABABA;">Имя</label>
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-floating mb-3 validation">
+                        <input asp-for="Surname" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="surnameInput" placeholder="Фамилия">
+                        <label for="floatingInput" style="color: #BABABA;">Фамилия</label>
+                        <span asp-validation-for="Surname" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-floating mb-3 validation">
+                        <input asp-for="Email" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="emailInput" placeholder="Электронная почта">
+                        <label for="floatingInput" style="color: #BABABA;">Электронная почта</label>
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <!-- Пароль не редактируется -->
+                    <p class="text-muted">Пароль изменить нельзя</p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary enter-registration-button">Сохранить</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+<script>
+    $(document).ready(function () {  //сохранение данных при закрытии окна
+        //сохранение исходного значения при загрузке
+        const originalValues = {
+            name: $('#nameInput').val(),
+            surname: $('#surnameInput').val(),
+            email: $('#emailInput').val()
+        };
+
+        //обработчик закрытия модального окна
+        $('#editAdminModal').on('hidden.bs.modal', function () {
+            //восстанавление исходного значения
+            $('#nameInput').val(originalValues.name);
+            $('#surnameInput').val(originalValues.surname);
+            $('#emailInput').val(originalValues.email);
+
+            //очищение об ошибках валидации
+            $('.text-danger').text('');
+            $('.validation').removeClass('is-invalid');
+        });
+
+        //обработчик отправки формы
+        $('#adminForm').submit(function (e) {
+            //обновление при успешном сохранении
+            originalValues.name = $('#nameInput').val();
+            originalValues.surname = $('#surnameInput').val();
+            originalValues.email = $('#emailInput').val();
+        });
+    });
+</script>

@@ -175,5 +175,12 @@ namespace DanceStudioFinder.Services
             _context.Schedules.Add(schedule);
             await _context.SaveChangesAsync();
         }
+
+        public async Task UpdateAdmin(Admin admin)
+        {
+            _context.Admins.Update(admin);
+            await _context.SaveChangesAsync();
+        }
+
     }
 }

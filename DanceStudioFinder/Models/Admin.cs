@@ -16,14 +16,20 @@ public partial class Admin
 
     [Column("name")]
     [StringLength(15)]
+    [Required(ErrorMessage = "Имя - обязательное поле для ввода")]
+    [RegularExpression(@"^[А-ЯЁ][а-яё]{0,14}$", ErrorMessage = "Имя должно быть введено на русском языке с заглавной буквы, длина не более 14 символов")]
     public string? Name { get; set; }
 
     [Column("surname")]
     [StringLength(40)]
+    [Required(ErrorMessage = "Фамилия - обязательное поле для ввода")]
+    [RegularExpression(@"^[А-ЯЁ][а-яё]{0,39}$", ErrorMessage = "Фамилия должна быть введена на русском языке с заглавной буквы, длина не более 40 символов")]
     public string? Surname { get; set; }
 
     [Column("email")]
     [StringLength(254)]
+    [Required(ErrorMessage = "Эл. почта - обязательное поле для ввода")]
+    [EmailAddress(ErrorMessage = "Некорректный формат эл. почты")]
     public string? Email { get; set; }
 
     [Column("password")]

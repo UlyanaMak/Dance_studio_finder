@@ -11,7 +11,7 @@
         <h3>
             <a href="@Url.Action("Index", "StudioDetails", new { studioId = Model.IdStudio })" style="color: #C8DE9D">@Model.Name</a>
         </h3>
-        @* Используем Address из навигационного свойства DanceStudio *@
+        @* Address из навигационного свойства DanceStudio *@
         <p class="address">
             @if (Model.IdAddressNavigation != null)
             {

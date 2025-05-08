@@ -176,6 +176,16 @@ namespace DanceStudioFinder.Controllers
                 model.DanceStudios = _context.DanceStudios.ToList();  //список студий
                 return View("Index", model);  //на главную страницу с модальным окном
             }
+
+            //извлечение стилей для обновления страницы
+            var styles = _context.Styles.OrderBy(s => s.IdStyle).ToList();  //стили
+
+            var studioFilterModel = new StudioFilterModel  //представление
+            {
+                Styles = styles
+            };
+            model.StudioFilter = studioFilterModel;
+
             //если пройдена валидация
             try
             {
@@ -209,6 +219,9 @@ namespace DanceStudioFinder.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(UserViewModel model)
         {
+            /*var register = model.Register;
+            var danceStudios = model.DanceStudios;
+            var studioFilter = model.StudioFilter;*/
             ModelState.Remove("Register");  //удалить проверку регистрации
             ModelState.Remove("DanceStudios");  //удалить проверку танцевальных студий
             ModelState.Remove("StudioFilter");  //удалить модель для фильтрации
@@ -218,6 +231,16 @@ namespace DanceStudioFinder.Controllers
                 model.DanceStudios = _context.DanceStudios.ToList();  //список студий
                 return View("Index", model);
             }
+
+            //извлечение стилей для обновления страницы
+            var styles = _context.Styles.OrderBy(s => s.IdStyle).ToList();  //стили
+
+            var studioFilterModel = new StudioFilterModel  //представление
+            {
+                Styles = styles
+            };
+            model.StudioFilter = studioFilterModel;
+
             var result = await _adminService.ValidateAdmin(model.Login);
             var admin = await _adminService.GetAdminByEmail(model.Login.LoginEmail);
 

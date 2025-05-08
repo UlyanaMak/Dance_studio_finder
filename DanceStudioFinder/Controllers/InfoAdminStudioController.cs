@@ -36,5 +36,29 @@ namespace DanceStudioFinder.Controllers
             await _infoAdminStudioService.DeleteStudio(adminId);
             return RedirectToAction("Index", "Home");
         }
+
+
+        /// <summary>
+        /// Изменение данных администратора
+        /// </summary>
+        /// <param name="updatedAdmin"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> UpdateAdmin(Admin updatedAdmin)
+        {
+            var admin = await _adminStudioService.FindAdmin(updatedAdmin.IdAdmin);
+            if (admin == null)
+            {
+                return NotFound();
+            }
+
+            admin.Name = updatedAdmin.Name;
+            admin.Surname = updatedAdmin.Surname;
+            admin.Email = updatedAdmin.Email;
+
+            await _adminStudioService.UpdateAdmin(admin);
+
+            return RedirectToAction("Index", new { adminId = admin.IdAdmin });
+        }
     }
 }

@@ -26,15 +26,9 @@ namespace DanceStudioFinder.Services
                     foreach (var group in studio.DanceGroups)
                     {
                         _context.Schedules.RemoveRange(group.Schedules);
-                        // AgeLimit не трогаем
                     }
 
                     _context.DanceGroups.RemoveRange(studio.DanceGroups);
-/*
-                    studio.IdAddress = 0;
-
-                    await _context.SaveChangesAsync(); // Промежуточное сохранение
-*/
                     _context.DanceStudios.Remove(studio);
 
                     await _context.SaveChangesAsync();
