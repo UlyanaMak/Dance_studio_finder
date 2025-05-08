@@ -1,0 +1,79 @@
+﻿@model DanceStudioFinder.Models.StudioFilterModel
+
+
+
+
+
+<!-- Название студии-->
+<div class="form-floating mb-3 mt-3 validation">
+    <input asp-for="Name" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="studioName" placeholder="Название студии">
+    <label for="floatingInput" style="color: #BABABA;">Название студии</label>
+    <span asp-validation-for="Name" class="text-danger"></span>
+</div>
+
+<!-- Населённый пункт-->
+<div class="form-floating mb-3 mt-3 validation">
+    <input asp-for="Locality" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="locality" placeholder="Населённый пункт">
+    <label for="floatingInput" style="color: #BABABA;">Населённый пункт (город/посёлок)</label>
+    <span asp-validation-for="Locality" class="text-danger"></span>
+</div>
+
+<!-- Район -->
+<div class="form-floating mb-3 mt-3 validation">
+    <input asp-for="SettlementArea" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="settlementArea" placeholder="Район">
+    <label for="floatingInput" style="color: #BABABA;">Район</label>
+    <span asp-validation-for="SettlementArea" class="text-danger"></span>
+</div>
+
+<!-- Улица -->
+<div class="form-floating mb-3 mt-3 validation">
+    <input asp-for="Street" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="street" placeholder="Улица">
+    <label for="floatingInput" style="color: #BABABA;">Улица</label>
+    <span asp-validation-for="Street" class="text-danger"></span>
+</div>
+
+<select name="Style" style="border: 1px solid #C8DE9D;" class="form-select mb-3">
+    <option value="">Танцевальное направление не указано</option> <!-- Пустой выбор -->
+    @foreach (var style in Model.Styles)
+    {
+        <option value="@style.IdStyle">
+            @(style.NameEng != null && style.NameRus != null ? $"{style.NameEng} ({style.NameRus})" : style.NameEng ?? style.NameRus)
+        </option>
+    }
+</select>
+
+<!--Время занятий-->
+<div class="row mb-3">
+    <div class="col">
+        <div class="form-floating">
+            <input asp-for="BeginTime" type="time" class="form-control" style="border: 1px solid #C8DE9D;" placeholder="Начало занятия" />
+            <label style="color: #BABABA;">Начало занятия</label>
+            <span asp-validation-for="BeginTime" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="col">
+        <div class="form-floating">
+            <input asp-for="EndTime" type="time" class="form-control" style="border: 1px solid #C8DE9D;" placeholder="Окончание занятия" />
+            <label style="color: #BABABA;">Окончание занятия</label>
+            <span asp-validation-for="EndTime" class="text-danger"></span>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Максимальная цена -->
+<div class="form-floating mb-3 mt-3 validation">
+    <input asp-for="MaxPrice" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="maxPrice" placeholder="Максимальная цена">
+    <label for="floatingInput" style="color: #BABABA;">Максимальная цена</label>
+    <span asp-validation-for="MaxPrice" class="text-danger"></span>
+</div>
+
+<!-- Возраст -->
+<div class="form-floating mb-3 mt-3 validation">
+    <input asp-for="Age" type="text" style="border: 1px solid #C8DE9D;" class="form-control" id="age" placeholder="Возраст">
+    <label for="floatingInput" style="color: #BABABA;">Возраст</label>
+    <span asp-validation-for="Age" class="text-danger"></span>
+</div>
+
+

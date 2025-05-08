@@ -25,6 +25,12 @@ namespace DanceStudioFinder.Controllers
             return View(admin);
         }
 
+
+        /// <summary>
+        /// Удаление студии
+        /// </summary>
+        /// <param name="adminId"></param>
+        /// <returns></returns>
         public async Task<IActionResult> DeleteStudio(int adminId)
         {
             await _infoAdminStudioService.DeleteStudio(adminId);

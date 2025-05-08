@@ -29,9 +29,17 @@ namespace DanceStudioFinder.Controllers
                 .Include(ds => ds.Prices)              // загрузка цен
                 .ToList();
 
+            var styles = _context.Styles.OrderBy(s => s.IdStyle).ToList();  //стили
+
+            var studioFilter = new StudioFilterModel  //представление
+            {
+                Styles = styles
+            };
+
             var viewModel = new UserViewModel  //созадние модели для главной страницы
             {
-                DanceStudios = danceStudios
+                DanceStudios = danceStudios,  //список студий
+                StudioFilter = studioFilter   //фильтрация студий
             };
 
             return View(viewModel);
@@ -39,16 +47,98 @@ namespace DanceStudioFinder.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Index(UserViewModel viewModel)
+        public IActionResult Index(StudioFilterModel filter)
         {
-            if (ModelState.IsValid)
+            var danceStudios = _context.DanceStudios
+                .Include(ds => ds.IdAddressNavigation)
+                .Include(ds => ds.Prices)
+                .Include(ds => ds.DanceGroups)
+                    .ThenInclude(group => group.Schedules)
+                .Include(ds => ds.DanceGroups)
+                    .ThenInclude(group => group.IdStyleNavigation)
+                .AsQueryable();
+
+            // Применяем фильтры
+            danceStudios = ApplyFilters(danceStudios, filter);
+
+            var filteredViewModel = new UserViewModel
             {
-                ViewData["ModelIsValid"] = true;
-                return View();
+                DanceStudios = danceStudios.ToList(),
+                StudioFilter = filter
+            };
+
+            if (!filteredViewModel.DanceStudios.Any())
+            {
+                ViewBag.NoResultsMessage = "Нет студий, подходящих под заданные фильтры.";
             }
-            ViewData["ModelIsValid"] = false;
-            return View();
+
+            return View(filteredViewModel);
         }
+
+
+        private IQueryable<DanceStudio> ApplyFilters(IQueryable<DanceStudio> query, StudioFilterModel filter)
+        {
+            // Фильтрация по названию
+            if (!string.IsNullOrWhiteSpace(filter.Name))
+            {
+                query = query.Where(s => s.Name.Contains(filter.Name));
+            }
+
+            // Фильтрация по адресу
+            if (!string.IsNullOrWhiteSpace(filter.Locality))
+            {
+                query = query.Where(s => s.IdAddressNavigation.Locality.Contains(filter.Locality));
+            }
+
+            if (!string.IsNullOrWhiteSpace(filter.SettlementArea))
+            {
+                query = query.Where(s => s.IdAddressNavigation.SettlementArea.Contains(filter.SettlementArea));
+            }
+
+            if (!string.IsNullOrWhiteSpace(filter.Street))
+            {
+                query = query.Where(s => s.IdAddressNavigation.Street.Contains(filter.Street));
+            }
+
+            // Фильтрация по стилю - для каждой группы танцев
+            if (!string.IsNullOrWhiteSpace(filter.Style))
+            {
+                var styleId = int.Parse(filter.Style);
+                query = query.Where(s => s.DanceGroups.Any(g => g.IdStyle == styleId));
+            }
+
+            // Фильтрация по цене
+            if (filter.MaxPrice.HasValue)
+            {
+                query = query.Where(s => s.Prices.Any(p => p.Price1 <= filter.MaxPrice.Value));
+            }
+
+            // Фильтрация по времени занятий
+            if (filter.BeginTime.HasValue)
+            {
+                query = query.Where(s => s.DanceGroups.Any(g =>
+                    g.Schedules.Any(sc => sc.BeginTime >= filter.BeginTime.Value)));
+            }
+
+            if (filter.EndTime.HasValue)
+            {
+                query = query.Where(s => s.DanceGroups.Any(g =>
+                    g.Schedules.Any(sc => sc.EndTime <= filter.EndTime.Value)));
+            }
+
+            // Фильтрация по возрасту (если реализовано в модели данных)
+            if (filter.Age.HasValue)
+            {
+                query = query.Where(s => s.DanceGroups.Any(g =>
+                    g.IdAgeLimitNavigation.MinAge <= filter.Age.Value &&
+                    g.IdAgeLimitNavigation.MaxAge >= filter.Age.Value));
+            }
+
+            return query;
+        }
+
+
+
 
         [HttpGet]
         public ActionResult Login()

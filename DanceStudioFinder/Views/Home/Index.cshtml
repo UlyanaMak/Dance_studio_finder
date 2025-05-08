@@ -42,11 +42,15 @@
             </div>
             <!-- Фильтры для поиска (меньшая часть) -->
             <div class="block-right">
-                <form id="filterForm">
+                <form id="filterForm" asp-action="Index" asp-controller="Home" method="post">
+
                     <button type="submit" class="btn btn-primary find-studio-button">Найти студии</button>
 
                     <!--Форма с фильтрами-->
+                    @{
+                        await Html.RenderPartialAsync("_StudioFilters", Model.StudioFilter);
 
+                    }
                 </form>
             </div>
         </div>

@@ -37,17 +37,8 @@ namespace DanceStudioFinder.Controllers
                 return RedirectToAction("CreateAddressStudio", new { adminId = adminId });     //переход на страницу с созданием студии (1)
             }
 
-            //!!!!!!!!!!!!!!!!Здесь измнеить модель представления
-            //если студия есть
-            /*var studioViewModel = new CreateAddressStudioViewModel  //создаем модель для представления информации о студии
-            {
-                Admin = admin,
-                DanceStudio = adminStudio,
-            };*/
-            //return RedirectToAction("Studio", studioViewModel);  //преедача модели в представление с информацией о студии
             //если студия есть
             return RedirectToAction("Index", "InfoAdminStudio", new { adminId = admin.IdAdmin });  //перенаправление на страницу студии админа
-            //!!!!!!!!!!!!!!!!Здесь измнеить модель представления
         }
 
 
