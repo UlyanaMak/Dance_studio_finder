@@ -204,6 +204,11 @@ namespace DanceStudioFinder.Controllers
                 }
                 else  //если администратор с такой почтой существует
                 {
+                    //выгрузка данных для представления основного экрана
+                    model.DanceStudios = await _context.DanceStudios
+                        .Include(s => s.IdAddressNavigation)
+                        .Include(s => s.Prices)
+                        .ToListAsync();
                     ModelState.AddModelError("Register.RegisterEmail", "Пользователь с данной эл. почтой уже зарегистрирован. Войдите в систему.");  //сообщение
                 }
             }
@@ -246,6 +251,11 @@ namespace DanceStudioFinder.Controllers
 
             if (admin == null)
             {
+                //выгрузка данных для представления основного экрана
+                model.DanceStudios = await _context.DanceStudios
+                    .Include(s => s.IdAddressNavigation)
+                    .Include(s => s.Prices)
+                    .ToListAsync();
                 ModelState.AddModelError("Login.LoginEmail", "Пользователь с данной эл. почтой ещё не зарегистрирован.");
             }
             else if (result)
@@ -254,6 +264,11 @@ namespace DanceStudioFinder.Controllers
             }
             else
             {
+                //выгрузка данных для представления основного экрана
+                model.DanceStudios = await _context.DanceStudios
+                    .Include(s => s.IdAddressNavigation)
+                    .Include(s => s.Prices)
+                    .ToListAsync();
                 ModelState.AddModelError("Login.LoginPassword", "Пароль некорректен.");
             }
 
