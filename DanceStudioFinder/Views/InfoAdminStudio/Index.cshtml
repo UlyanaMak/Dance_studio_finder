@@ -104,7 +104,152 @@
     </div>
 </div>
 
+<div class="studio-container">
+    <h2 class="studio-name">@Model.Studio.Name</h2>
 
+    <!-- Адрес -->
+    <div class="mb-4">
+        <p class="studio-address">
+            @Model.Studio.IdAddressNavigation.Entity,
+            @Model.Studio.IdAddressNavigation.Locality,
+            @if (!string.IsNullOrEmpty(Model.Studio.IdAddressNavigation.SettlementArea))
+            {
+                @($"{Model.Studio.IdAddressNavigation.SettlementArea}, ")
+            }
+            ул. @Model.Studio.IdAddressNavigation.Street,
+            @Model.Studio.IdAddressNavigation.BuildingNumber
+            @if (!string.IsNullOrEmpty(Model.Studio.IdAddressNavigation.Letter))
+            {
+                @Model.Studio.IdAddressNavigation.Letter
+            }
+        </p>
+    </div>
+
+    <hr style="border: 2px solid #C8DE9D; margin-bottom: 10px; margin-top: 10px" />
+
+    <!-- Контакты -->
+    <div class="mb-4">
+        <p class="phone-number">+7 (@Model.Studio.PhoneNumber.Substring(0, 3)) @Model.Studio.PhoneNumber.Substring(3, 3)-@Model.Studio.PhoneNumber.Substring(6, 2)-@Model.Studio.PhoneNumber.Substring(8)</p>
+        @if (!string.IsNullOrEmpty(Model.Studio.ExtraPhoneNumber))
+        {
+            <p class="phone-number">+7 (@Model.Studio.ExtraPhoneNumber.Substring(0, 3)) @Model.Studio.ExtraPhoneNumber.Substring(3, 3)-@Model.Studio.ExtraPhoneNumber.Substring(6, 2)-@Model.Studio.ExtraPhoneNumber.Substring(8)</p>
+        }
+
+        @if (!string.IsNullOrEmpty(Model.Studio.VkGroup) || !string.IsNullOrEmpty(Model.Studio.Telegram) || !string.IsNullOrEmpty(Model.Studio.Website))
+        {
+            @* <h3 class="field-label">Ссылки на социальные сети</h3> *@
+            @if (!string.IsNullOrEmpty(Model.Studio.VkGroup))
+            {
+                <p class="link" style="font-family: Times New Roman, sans-serif;">ВКонтакте: <a href="@Model.Studio.VkGroup" target="_blank">@Model.Studio.VkGroup</a></p>
+            }
+            @if (!string.IsNullOrEmpty(Model.Studio.Telegram))
+            {
+                <p class="link" style="font-family: Times New Roman, sans-serif;">Telegram: <a href="@Model.Studio.Telegram" target="_blank">@Model.Studio.Telegram</a></p>
+            }
+            @if (!string.IsNullOrEmpty(Model.Studio.Website))
+            {
+                <p class="link" style="font-family: Times New Roman, sans-serif;">Сайт: <a href="@Model.Studio.Website" target="_blank">@Model.Studio.Website</a></p>
+            }
+        }
+    </div>
+
+    <hr style="border: 2px solid #C8DE9D; margin-bottom: 10px; margin-top: 10px" />
+
+    <!-- Цены -->
+    <h3 class="field-label">Цены</h3>
+
+    @{
+
+        if (Model != null && Model.Prices.Any())
+        {
+            foreach (var price in Model.Prices)
+            {
+                <div class="price-item">
+                    <span class="price-description">@price.Description</span>
+                    @if (price.Price1 == 0)
+                    {
+                        <span class="price-value">бесплатно</span>
+                    }
+                    else
+                    {
+                        <span class="price-value">@price.Price1</span>
+                    }
+                </div>
+            }
+        }
+    }
+
+
+    <hr style="border: 2px solid #C8DE9D; margin-bottom: 10px; margin-top: 10px" />
+
+    <!-- Группы -->
+    @{
+        var allTimes = Model.Groups  //все отрезки времени
+        .SelectMany(g => g.Schedule)
+        .Select(s => new { Start = s.BeginTime, End = s.EndTime })
+        .Distinct()
+        .OrderBy(t => t.Start)
+        .ToList();
+
+        var weekDays = Model.WeekDays.OrderBy(d => d.IdDay).ToList(); //извлечение дней недели из БД
+    }
+    <h3 class="field-label mb-4">Расписание групповых занятий</h3>
+
+    <div class="table-responsive">
+        <table class="table table-bordered text-center align-middle schedule-table" style="margin-top: 10px;">
+            <thead class="table-primary">
+                <tr>
+                    <th class="time-column" style="
+                        font-family: 'Times New Roman', sans-serif;
+                        background-color: #F2FCC6;
+                        vertical-align: middle;
+                        text-align: center;
+                        height: 40px;
+                        line-height: 40px;">Время</th>
+                    @foreach (var day in weekDays)
+                    {
+                        <th class="day-header">@day.Name</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var timeSlot in allTimes)
+                {
+                    <tr>
+                        <td class="time-slot bg-light fw-bold">
+                            @timeSlot.Start.ToString("HH:mm") – @timeSlot.End.ToString("HH:mm")
+                        </td>
+
+                        @foreach (var day in weekDays)
+                        {
+                            var groupsInSlot = Model.Groups
+                            .Where(g => g.Schedule.Any(s =>
+                            s.Day.IdDay == day.IdDay &&
+                            s.BeginTime == timeSlot.Start &&
+                            s.EndTime == timeSlot.End))
+                            .ToList();
+
+                            <td class="schedule-cell">
+                                @foreach (var group in groupsInSlot)
+                                {
+                                    <div style="text-align: center; margin-bottom: 8px; font-family: 'Times New Roman', sans-serif;">
+                                        <div style="font-weight: bold;">@group.Name</div>
+                                        <div style="color: black; font-family: 'Times New Roman', sans-serif; font-size: 0.875em;">
+                                            @(group.Style.NameEng != null && group.Style.NameRus != null
+                                                ? $"{group.Style.NameEng} ({group.Style.NameRus})"
+                                                : group.Style.NameEng ?? group.Style.NameRus)
+                                        </div>
+                                        <div style="color: black; font-family: 'Times New Roman', sans-serif; font-size: 0.875em;">@group.AgeLimit.Name</div>
+                                    </div>
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

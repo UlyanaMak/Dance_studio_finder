@@ -46,8 +46,8 @@
 
                         <!-- Название группы -->
                         <div class="form-floating mb-3 validation">
-                            <input asp-for="Groups[i].Name" class="form-control" style="border: 1px solid #F7C9D4;" />
-                            <label>Название группы</label>
+                            <input asp-for="Groups[i].Name" class="form-control" style="border: 1px solid #F7C9D4; margin-top: 15px;" />
+                            <label style="color: #BABABA;">Название группы</label>
                             <span asp-validation-for="Groups[i].Name" class="text-danger"></span>
                         </div>
 
@@ -188,7 +188,7 @@
                         <button type="button" class="btn-close position-absolute top-0 end-0 m-2"
                                 onclick="removeGroup(this)" aria-label="Закрыть"></button>
 
-                        <div class="form-floating mb-3 validation">
+                         <div class="form-floating mb-3 validation" style="margin-top: 15px;">
                             <input name="Groups[${index}].Name"
                                    class="form-control"
                                    style="border: 1px solid #F7C9D4;"
@@ -196,7 +196,7 @@
                                    data-val-required="Название группы - обязательное поле для ввода"
                                    data-val-length="Название группы должно быть не более 150 символов"
                                    data-val-length-max="150"/>
-                            <label>Название группы</label>
+                            <label style="color: #BABABA;">Название группы</label>
                             <span class="text-danger field-validation-valid"
                                   data-valmsg-for="Groups[${index}].Name"
                                   data-valmsg-replace="true"></span>
