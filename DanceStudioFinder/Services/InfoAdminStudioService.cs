@@ -1,4 +1,5 @@
 ﻿using DanceStudioFinder.Data;
+using DanceStudioFinder.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace DanceStudioFinder.Services
@@ -82,5 +83,48 @@ namespace DanceStudioFinder.Services
             }
         }
 
+
+        public async Task<Address?> FindAddress(int addressId)
+        {
+            return await _context.Addresses.FirstOrDefaultAsync<Address>(a => a.IdAddress == addressId);
+        }
+
+        public async Task UpdateStudio(DanceStudio studio)
+        {
+            _context.DanceStudios.Update(studio);
+            await _context.SaveChangesAsync();
+        }
+
+
+        public async Task UpdateAddress(Address address)
+        {
+            _context.Addresses.Update(address);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<DanceStudio?> FindStudioWithPrices(int id)
+        {
+            return await _context.DanceStudios
+                .Include(s => s.Prices) // включаем связанные цены
+                .FirstOrDefaultAsync(s => s.IdAdmin == id);
+        }
+
+        public async Task<bool> DeleteAllPricesForStudio(int studioId)
+        {
+            try
+            {
+                var pricesToDelete = await _context.Prices
+                    .Where(p => p.IdStudio == studioId)
+                    .ToListAsync();
+
+                _context.Prices.RemoveRange(pricesToDelete);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

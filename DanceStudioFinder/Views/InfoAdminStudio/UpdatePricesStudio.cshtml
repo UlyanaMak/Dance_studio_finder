@@ -1,0 +1,222 @@
+﻿@model DanceStudioFinder.ViewModels.CreatePricesStudioViewModel
+@{
+    ViewData["Title"] = "Изменение цен студии";
+}
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Поиск танцевальных студий</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/adminStudio.css" asp-append-version="true" />
+</head>
+
+@section AdminInfo {
+    @($"Администратор: {Model.Admin.Name} {Model.Admin.Surname}")
+}
+
+@section HeaderButtons {
+    <button type="button" id="buttonToContinue" class="main-button">
+        Далее
+    </button>
+    <input class="main-button" type="submit" onclick="location.href ='@Url.Action("Index", "InfoAdminStudio", new {adminId = Model.Admin.IdAdmin})'" value="Завершить" />
+}
+
+<body>
+    <form class="needs-validation" novalidate asp-controller="InfoAdminStudio" asp-action="UpdatePricesStudio" method="post">
+        <input type="hidden" asp-for="Admin.IdAdmin" />
+        <input type="hidden" asp-for="DanceStudio.IdStudio" />
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="container-fluid px-3">
+            <span class="field-title">Цены</span>
+            <div id="price-container" class="mb-3">
+                @{
+                    int i = 0;
+                }
+                @foreach (var price in Model.Prices)
+                {
+                    <div class="row g-2 align-items-center mb-2 price-row" id="priceRow@i">
+                        <div class="col-4">
+                            <div class="form-floating mb-3 validation">
+                                @Html.TextBox($"Prices[{i}].Price1", price.Price1, new
+                                    {
+                                        @class = "form-control price-input",
+                                        placeholder = "Цена",
+                                        style = "border: 1px solid #F7C9D4;"
+                                    })
+                                <label style="color: #BABABA;">Цена</label>
+                                <span asp-validation-for="Prices[@i].Price1" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-floating mb-3 validation">
+                                @Html.TextBox($"Prices[{i}].Description", price.Description, new
+                                    {
+                                        @class = "form-control description-input",
+                                        placeholder = "Описание",
+                                        style = "border: 1px solid #F7C9D4;"
+                                    })
+                                <label style="color: #BABABA;">Описание</label>
+                                <span asp-validation-for="Prices[@i].Description" class="text-danger"></span>
+                            </div>
+                        </div>
+                        @if (i > 0)
+                        {
+                            <div class="col-2 d-flex align-items-center">
+                                <button type="button" class="btn btn-danger btn-sm"
+                                        onclick="removePriceField(this)">
+                                    Удалить
+                                </button>
+                            </div>
+                        }
+                    </div>
+                    i++;
+                }
+            </div>
+
+            <button type="button" class="btn btn-outline-primary" onclick="addPriceField()">+ Добавить цену</button>
+            <input type="hidden" id="pricesData" name="PricesData" />
+        </div>
+
+        <button type="submit" id="saveChanges" class="main-button" style="display: none;">Сохранить</button>
+    </form>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+</body>
+
+@section Scripts {
+    <script>
+        document.getElementById('buttonToContinue').addEventListener('click', function () {
+            document.getElementById('saveChanges').click();
+        });
+
+        let priceIndex = @(Model.Prices.Count);
+
+        function addPriceField() {
+            const container = document.getElementById("price-container");
+            const newIndex = priceIndex++;
+
+            const row = document.createElement("div");
+            row.className = "row g-2 align-items-center mb-2 price-row";
+            row.id = `priceRow${newIndex}`;
+
+            row.innerHTML = `
+                        <div class="col-4">
+                            <div class="form-floating mb-3 validation">
+                                <input name="Prices[${newIndex}].Price1"
+                                       type="number"
+                                       min="0"
+                                       max="10000"
+                                       style="border: 1px solid #F7C9D4;"
+                                       class="form-control price-input"
+                                       placeholder="Цена"
+                                       data-val="true"
+                                       data-val-required="Цена - обязательное поле"
+                                       data-val-range="Цена должна быть от 0 до 10000"
+                                       data-val-range-min="0"
+                                       data-val-range-max="10000"
+                                       data-val-number="Поле должно содержать числовое значение" />
+                                <label style="color: #BABABA;">Цена</label>
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="Prices[${newIndex}].Price1"
+                                      data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-floating mb-3 validation">
+                                <input name="Prices[${newIndex}].Description"
+                                       type="text"
+                                       style="border: 1px solid #F7C9D4;"
+                                       class="form-control description-input"
+                                       placeholder="Описание"
+                                       data-val="true"
+                                       data-val-required="Описание - обязательное поле"
+                                       data-val-length="Описание не должно превышать 500 символов"
+                                       data-val-length-max="500" />
+                                <label style="color: #BABABA;">Описание</label>
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="Prices[${newIndex}].Description"
+                                      data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+                        <div class="col-2 d-flex align-items-center">
+                            <button type="button" class="btn btn-danger btn-sm"
+                                            onclick="removePriceField(this)">
+                                Удалить
+                            </button>
+                        </div>
+                    `;
+
+            container.appendChild(row);
+
+            // Переинициализация валидации
+            const form = $("form");
+            form.removeData("validator").removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+        }
+
+        function removePriceField(buttonOrId) {
+            // Определяем, что было передано - кнопка или ID
+            const row = typeof buttonOrId === 'string'
+                ? document.getElementById(buttonOrId)
+                : buttonOrId.closest('.price-row');
+
+            if (row) {
+                row.remove();
+                reindexPriceFields();
+
+                // Переинициализация валидации после удаления
+                const form = $("form");
+                form.removeData("validator").removeData("unobtrusiveValidation");
+                $.validator.unobtrusive.parse(form);
+            }
+        }
+
+        function reindexPriceFields() {
+            const rows = document.querySelectorAll('#price-container .price-row');
+            let currentIndex = 0;
+
+            rows.forEach(row => {
+                const inputs = row.querySelectorAll('input[data-val="true"]');
+                const spans = row.querySelectorAll('span[data-valmsg-for]');
+
+                inputs.forEach(input => {
+                    input.name = input.name.replace(/Prices\[\d+\]/, `Prices[${currentIndex}]`);
+                });
+
+                spans.forEach(span => {
+                    span.setAttribute('data-valmsg-for',
+                        span.getAttribute('data-valmsg-for').replace(/Prices\[\d+\]/, `Prices[${currentIndex}]`));
+                });
+
+                row.id = `priceRow${currentIndex}`;
+                currentIndex++;
+            });
+
+            // Обновляем глобальный индекс
+            priceIndex = currentIndex;
+        }
+        document.getElementById('buttonToContinue').addEventListener('click', function () {
+            // Собираем все цены в массив
+            const prices = [];
+            document.querySelectorAll('.price-row').forEach(row => {
+                const priceInput = row.querySelector('.price-input');
+                const descriptionInput = row.querySelector('.description-input');
+
+                prices.push({
+                    Price1: priceInput.value,
+                    Description: descriptionInput.value
+                });
+            });
+
+            // Записываем в скрытое поле
+            document.getElementById('pricesData').value = JSON.stringify(prices);
+            document.getElementById('saveChanges').click();
+        });
+    </script>
+}
+

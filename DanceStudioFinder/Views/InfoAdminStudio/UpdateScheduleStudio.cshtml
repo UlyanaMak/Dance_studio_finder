@@ -1,0 +1,23 @@
+﻿@model DanceStudioFinder.ViewModels.CreateScheduleStudioViewModel
+
+@{
+    ViewData["Title"] = "Изменение групп и их расписания";
+}
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Поиск танцевальных студий</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/adminStudio.css" asp-append-version="true" />
+</head>
+
+@section AdminInfo {
+    @($"Администратор: {Model.Admin.Name} {Model.Admin.Surname}")
+}
+@section HeaderButtons {
+    <button type="button" id="buttonToSaveChanges" class="main-button">
+        Сохранить
+    </button>
+    <input class="main-button" type="submit" onclick="location.href ='@Url.Action("Index", "InfoAdminStudio", new {adminId = Model.Admin.IdAdmin})'" value="Завершить" />
+}

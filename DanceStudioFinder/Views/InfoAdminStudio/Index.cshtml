@@ -24,7 +24,10 @@
 }
 
 @section HeaderButtons {
-    <!--Кнопка сохранения, нажимает сохранение в форме-->
+    <!--Удаление студии-->
+    <button type="button" id="buttonToUpdate" class="main-button" onclick="location.href ='@Url.Action("UpdateStudio", "InfoAdminStudio", new { adminId = Model.Admin.IdAdmin })'">
+        Редактировать данные студии
+    </button>
     <button type="button" id="buttonToDelete" class="main-button" onclick="location.href ='@Url.Action("DeleteStudio", "InfoAdminStudio", new { adminId = Model.Admin.IdAdmin })'">
         Удалить студию
     </button>
