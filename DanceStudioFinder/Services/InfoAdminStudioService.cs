@@ -126,5 +126,97 @@ namespace DanceStudioFinder.Services
                 return false;
             }
         }
+
+        public async Task<List<GroupWithSchedules>> GetGroupsWithSchedules(int studioId)
+        {
+            return await _context.DanceGroups
+                .Where(g => g.IdStudio == studioId)
+                .Include(g => g.Schedules)
+                .Include(g => g.IdAgeLimitNavigation) // Добавляем загрузку AgeLimit
+                .Select(g => new GroupWithSchedules
+                {
+                    Id = g.IdGroup,
+                    Name = g.Name,
+                    StyleId = g.IdStyle,
+                    // Берем MinAge и MaxAge из связанной таблицы AgeLimits
+                    MinAge = g.IdAgeLimitNavigation != null ? g.IdAgeLimitNavigation.MinAge : null,
+                    MaxAge = g.IdAgeLimitNavigation != null ? g.IdAgeLimitNavigation.MaxAge : null,
+                    Description = g.Description,
+                    Schedules = g.Schedules.Select(s => new Schedule
+                    {
+                        IdSchedule = s.IdSchedule,
+                        IdDay = s.IdDay,
+                        BeginTime = s.BeginTime,
+                        EndTime = s.EndTime,
+                        IdGroup = s.IdGroup
+                    }).ToList()
+                })
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task<List<DanceGroup>> GetGroupsByStudioId(int studioId)
+        {
+            return await _context.DanceGroups
+                .Where(g => g.IdStudio == studioId)
+                .ToListAsync();
+        }
+
+        public async Task<HashSet<int>> GetAgeLimitsUsedByOtherStudios(int studioId)
+        {
+            var ageLimits = await _context.DanceGroups
+                .Where(g => g.IdStudio != studioId)
+                .Select(g => g.IdAgeLimit)
+                .Distinct()
+                .ToListAsync();
+
+            return new HashSet<int>(ageLimits);
+        }
+
+        public async Task DeleteSchedulesByGroupId(int groupId)
+        {
+            var schedules = await _context.Schedules
+                .Where(s => s.IdGroup == groupId)
+                .ToListAsync();
+
+            _context.Schedules.RemoveRange(schedules);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteGroup(int groupId)
+        {
+            var group = await _context.DanceGroups.FindAsync(groupId);
+            if (group != null)
+            {
+                _context.DanceGroups.Remove(group);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task DeleteAgeLimit(int ageLimitId)
+        {
+            var ageLimit = await _context.AgeLimits.FindAsync(ageLimitId);
+            if (ageLimit != null)
+            {
+                _context.AgeLimits.Remove(ageLimit);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<bool> IsAgeLimitUsedByOtherGroups(int ageLimitId, int excludeGroupId)
+        {
+            return await _context.DanceGroups
+                .AnyAsync(g => g.IdAgeLimit == ageLimitId && g.IdGroup != excludeGroupId);
+        }
+    }
+    public class GroupWithSchedules
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int StyleId { get; set; }
+        public int? MinAge { get; set; }
+        public int? MaxAge { get; set; }
+        public string Description { get; set; }
+        public List<Schedule> Schedules { get; set; }
     }
 }

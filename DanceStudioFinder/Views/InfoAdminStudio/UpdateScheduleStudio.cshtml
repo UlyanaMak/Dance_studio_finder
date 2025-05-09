@@ -1,5 +1,4 @@
 ﻿@model DanceStudioFinder.ViewModels.CreateScheduleStudioViewModel
-
 @{
     ViewData["Title"] = "Изменение групп и их расписания";
 }
@@ -20,4 +19,281 @@
         Сохранить
     </button>
     <input class="main-button" type="submit" onclick="location.href ='@Url.Action("Index", "InfoAdminStudio", new {adminId = Model.Admin.IdAdmin})'" value="Завершить" />
+}
+
+<body>
+    <form class="needs-validation" novalidate asp-controller="InfoAdminStudio" asp-action="UpdateScheduleStudio" method="post">
+        <input type="hidden" asp-for="Admin.IdAdmin" />
+        <input type="hidden" asp-for="DanceStudio.IdStudio" />
+        <input type="hidden" id="groupsData" name="groupsData" />
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="container-fluid px-3">
+            <span class="field-title">Группы</span>
+            <div id="group-container" class="mb-3">
+                @{
+                    int i = 0;
+                }
+                @foreach (var group in Model.Groups)
+                {
+                    <div class="group-row border p-3 rounded mb-3 position-relative" id="groupRow@i">
+                        @if (i > 0)
+                        {
+                            <button type="button" class="btn-close position-absolute top-0 end-0 m-2"
+                                    onclick="removeGroup(this)"></button>
+                        }
+
+                        <!-- Название группы -->
+                        <div class="form-floating mb-3 validation">
+                            <input asp-for="Groups[i].Name" class="form-control" style="border: 1px solid #F7C9D4;" />
+                            <label>Название группы</label>
+                            <span asp-validation-for="Groups[i].Name" class="text-danger"></span>
+                        </div>
+
+                        @{
+                            var stylesWithDisplayName = Model.Styles
+                            .Select(s => new
+                            {
+                                IdStyle = s.IdStyle,
+                                DisplayName = s.NameEng != null && s.NameRus != null
+                            ? $"{s.NameEng} ({s.NameRus})"
+                            : s.NameEng ?? s.NameRus
+                            })
+                            .ToList();
+                        }
+
+                        <!-- Танцевальное направление -->
+                        <label>Направление</label>
+                        <select asp-for="Groups[i].StyleId"
+                                asp-items="@(new SelectList(stylesWithDisplayName, "IdStyle", "DisplayName"))"
+                                class="form-select mb-3"
+                                style="border: 1px solid #F7C9D4;"></select>
+
+                        <!-- Возрастное ограничение -->
+                        <label>Возрастное ограничение</label>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <div class="form-floating">
+                                    <input asp-for="Groups[i].MinAge" type="number" class="form-control" style="border: 1px solid #F7C9D4;" />
+                                    <label style="color: #BABABA;">От</label>
+                                    <span asp-validation-for="Groups[i].MinAge" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-floating">
+                                    <input asp-for="Groups[i].MaxAge" type="number" class="form-control" style="border: 1px solid #F7C9D4;" />
+                                    <label style="color: #BABABA;">До</label>
+                                    <span asp-validation-for="Groups[i].MaxAge" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Описание группы -->
+                        <div class="form-floating mb-3">
+                            <textarea asp-for="Groups[i].Description" class="form-control" style="height: 100px; border: 1px solid #F7C9D4;"></textarea>
+                            <label style="color: #BABABA;">Описание</label>
+                        </div>
+
+                        <!-- Расписание -->
+                        <div class="schedule-container">
+                            @for (int j = 0; j < group.Schedule.Count; j++)
+                            {
+                                <div class="d-flex align-items-center mb-2">
+                                    <select asp-for="Groups[i].Schedule[j].DayOfWeekId"
+                                            asp-items="@(new SelectList(Model.WeekDays, "IdDay", "Name"))"
+                                            class="form-select me-2" style="width: 25%; border: 1px solid #F7C9D4;"></select>
+
+                                    <input asp-for="Groups[i].Schedule[j].BeginTime" type="time"
+                                           value="@group.Schedule[j].BeginTime.ToString("HH:mm")"
+                                           class="form-control me-2" style="width: 25%; border: 1px solid #F7C9D4;" />
+
+                                    <input asp-for="Groups[i].Schedule[j].EndTime" type="time"
+                                           value="@group.Schedule[j].EndTime.ToString("HH:mm")"
+                                           class="form-control me-2" style="width: 25%; border: 1px solid #F7C9D4;" />
+
+                                    <button type="button" class="btn btn-danger"
+                                            onclick="removeDayField(this, @i)">
+                                        Удалить
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary"
+                                onclick="addDayField(this, @i)">
+                            + Добавить день
+                        </button>
+                    </div>
+                    i++;
+                }
+            </div>
+
+            <button type="button" class="btn btn-outline-primary" onclick="addGroup()">+ Добавить группу</button>
+        </div>
+
+        <button type="submit" id="saveChanges" class="main-button" style="display: none;">Сохранить</button>
+    </form>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+</body>
+
+@section Scripts {
+    <script>
+        document.getElementById('buttonToSaveChanges').addEventListener('click', function () {
+            const groups = [];
+            document.querySelectorAll('.group-row').forEach(groupRow => {
+                const group = {
+                    Name: groupRow.querySelector('input[name$="Name"]').value,
+                    StyleId: parseInt(groupRow.querySelector('select[name$="StyleId"]').value),
+                    MinAge: parseInt(groupRow.querySelector('input[name$="MinAge"]').value) || null,
+                    MaxAge: parseInt(groupRow.querySelector('input[name$="MaxAge"]').value) || null,
+                    Description: groupRow.querySelector('textarea[name$="Description"]').value,
+                    Schedule: []
+                };
+
+                groupRow.querySelectorAll('.schedule-container > div').forEach(scheduleRow => {
+                    const formatTime = (timeStr) => {
+                        if (!timeStr) return "00:00";
+                        const [hours, minutes] = timeStr.split(':');
+                        return `${hours.padStart(2, '0')}:${(minutes || '00').padStart(2, '0')}`;
+                    };
+
+                    group.Schedule.push({
+                        DayOfWeekId: parseInt(scheduleRow.querySelector('select[name$="DayOfWeekId"]').value),
+                        BeginTime: formatTime(scheduleRow.querySelector('input[name$="BeginTime"]').value),
+                        EndTime: formatTime(scheduleRow.querySelector('input[name$="EndTime"]').value)
+                    });
+                });
+
+                groups.push(group);
+            });
+
+            document.getElementById('groupsData').value = JSON.stringify(groups);
+            document.getElementById('saveChanges').click();
+        });
+
+        let groupIndex = @Model.Groups.Count;
+
+        function addGroup() {
+            const container = document.getElementById("group-container");
+            const index = groupIndex++;
+            const group = document.createElement("div");
+            group.className = "group-row border p-3 rounded mb-3 position-relative";
+            group.id = `groupRow${index}`;
+
+            group.innerHTML = `
+                        <button type="button" class="btn-close position-absolute top-0 end-0 m-2"
+                                onclick="removeGroup(this)" aria-label="Закрыть"></button>
+
+                        <div class="form-floating mb-3 validation">
+                            <input name="Groups[${index}].Name"
+                                   class="form-control"
+                                   style="border: 1px solid #F7C9D4;"
+                                   data-val="true"
+                                   data-val-required="Название группы - обязательное поле для ввода"
+                                   data-val-length="Название группы должно быть не более 150 символов"
+                                   data-val-length-max="150"/>
+                            <label>Название группы</label>
+                            <span class="text-danger field-validation-valid"
+                                  data-valmsg-for="Groups[${index}].Name"
+                                  data-valmsg-replace="true"></span>
+                        </div>
+
+                        <label>Направление</label>
+                        <select name="Groups[${index}].StyleId" class="form-select mb-3"
+                                style="border: 1px solid #F7C9D4;" required>
+                            ${generateStyleOptions()}
+                        </select>
+
+                        <label>Возрастное ограничение</label>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <div class="form-floating">
+                                    <input name="Groups[${index}].MinAge" type="number"
+                                           class="form-control" style="border: 1px solid #F7C9D4;"/>
+                                    <label style="color: #BABABA;">От</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-floating">
+                                    <input name="Groups[${index}].MaxAge" type="number"
+                                           class="form-control" style="border: 1px solid #F7C9D4;"/>
+                                    <label style="color: #BABABA;">До</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <textarea name="Groups[${index}].Description" class="form-control"
+                                      style="height: 100px; border: 1px solid #F7C9D4;"></textarea>
+                            <label style="color: #BABABA;">Описание</label>
+                        </div>
+
+                        <div class="schedule-container mb-3"></div>
+                        <button type="button" class="btn btn-outline-secondary"
+                                onclick="addDayField(this, ${index})">+ Добавить день</button>
+                    `;
+
+            container.appendChild(group);
+            $.validator.unobtrusive.parse(container);
+        }
+
+        function removeGroup(button) {
+            const group = button.closest('.group-row');
+            if (group && confirm('Вы уверены, что хотите удалить эту группу?')) {
+                group.remove();
+            }
+        }
+
+        function generateStyleOptions() {
+            const styles = @Html.Raw(Json.Serialize(Model.Styles));
+            return styles.map(s =>
+                `<option value="${s.idStyle}">
+                            ${s.nameEng ?? ''}${s.nameEng && s.nameRus ? ' (' : ''}${s.nameRus ?? ''}${s.nameEng && s.nameRus ? ')' : ''}
+                        </option>`
+            ).join('');
+        }
+
+        function addDayField(button, groupIdx) {
+            const container = button.closest('.group-row').querySelector('.schedule-container');
+            const newIndex = container.children.length;
+
+            const row = document.createElement("div");
+            row.className = "d-flex align-items-center mb-2";
+            row.innerHTML = `
+                <select name="Groups[${groupIdx}].Schedule[${newIndex}].DayOfWeekId"
+                        class="form-select me-2" style="width: 25%; border: 1px solid #F7C9D4;" required>
+                    ${generateWeekDayOptions()}
+                </select>
+
+                <input name="Groups[${groupIdx}].Schedule[${newIndex}].BeginTime"
+                       type="time" value=""
+                       class="form-control me-2" style="width: 25%; border: 1px solid #F7C9D4;" required />
+
+                <input name="Groups[${groupIdx}].Schedule[${newIndex}].EndTime"
+                       type="time" value=""
+                       class="form-control me-2" style="width: 25%; border: 1px solid #F7C9D4;" required />
+
+                <button type="button" class="btn btn-danger"
+                        onclick="this.parentElement.remove()">Удалить</button>
+            `;
+
+            container.appendChild(row);
+        }
+
+        function generateWeekDayOptions() {
+            const weekDays = @Html.Raw(Json.Serialize(Model.WeekDays));
+            return weekDays.map(d =>
+                `<option value="${d.idDay}">${d.name}</option>`
+            ).join('');
+        }
+
+        function removeDayField(button, groupIdx) {
+            const row = button.closest('div');
+            row.remove();
+        }
+    </script>
 }

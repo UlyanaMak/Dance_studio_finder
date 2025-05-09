@@ -217,7 +217,7 @@ namespace DanceStudioFinder.Controllers
         }
 
         /// <summary>
-        /// (2) страница создания цен студии
+        /// (2) страница изменения цен студии
         /// </summary>
         /// <param name="adminId"></param>
         /// <returns></returns>
@@ -286,29 +286,141 @@ namespace DanceStudioFinder.Controllers
         }
 
         /// <summary>
-        /// (3) страница создания групп и их расписания в студии
+        /// (3) страница изменения групп и их расписания в студии
         /// </summary>
         /// <param name="adminId"></param>
         /// <returns></returns>
         public async Task<IActionResult> UpdateScheduleStudio(int adminId)
         {
-            var admin = await _adminStudioService.FindAdmin(adminId);  //нахождение администратора по id
+            var admin = await _adminStudioService.FindAdmin(adminId);
             if (admin == null) return NotFound();
 
             var studio = await _adminStudioService.FindStudio(adminId);
-            var styles = _adminStudioService.GetStyles(); // Получаем стили
-            var days = _adminStudioService.GetWeekDays();  // Дни недели
-            //модель для представления
+            var styles = _adminStudioService.GetStyles();
+            var days = _adminStudioService.GetWeekDays();
+
+            // Получаем существующие группы с расписаниями
+            var existingGroups = await _infoAdminStudioService.GetGroupsWithSchedules(studio.IdStudio);
+
             var viewModel = new CreateScheduleStudioViewModel
             {
                 Admin = admin,
                 DanceStudio = studio,
                 Styles = styles,
-                WeekDays = days
+                WeekDays = days,
+                Groups = existingGroups.Select(g => new GroupViewModel
+                {
+                    Name = g.Name,
+                    StyleId = g.StyleId,
+                    MinAge = g.MinAge,
+                    MaxAge = g.MaxAge,
+                    Description = g.Description,
+                    Schedule = g.Schedules.Select(s => new ScheduleViewModel
+                    {
+                        DayOfWeekId = s.IdDay,
+                        BeginTime = s.BeginTime,
+                        EndTime = s.EndTime
+                    }).ToList()
+                }).ToList()
             };
-            return View(viewModel);  //передача модели  представление
-
-
+            return View(viewModel);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateScheduleStudio(CreateScheduleStudioViewModel viewModel, string groupsData)
+        {
+            int idAdmin = viewModel.Admin.IdAdmin;
+            int idStudio = viewModel.DanceStudio.IdStudio;
+            try
+            {
+                var settings = new JsonSerializerSettings
+                {
+                    Converters = new List<JsonConverter> { new TimeOnlyJsonConverter() }
+                };
+
+                var groups = JsonConvert.DeserializeObject<List<GroupViewModel>>(groupsData, settings);
+
+                //текущие группы студии
+                var existingGroups = await _infoAdminStudioService.GetGroupsByStudioId(idStudio);
+
+                //удаление всех существующие группы и их расписание
+                foreach (var existingGroup in existingGroups)
+                {
+                    await _infoAdminStudioService.DeleteSchedulesByGroupId(existingGroup.IdGroup);
+                    await _infoAdminStudioService.DeleteGroup(existingGroup.IdGroup);
+
+                    //используется ли AgeLimit другими студиями
+                    var isAgeLimitUsed = await _infoAdminStudioService.IsAgeLimitUsedByOtherGroups(
+                        existingGroup.IdAgeLimit, existingGroup.IdGroup);
+
+                    if (!isAgeLimitUsed)
+                    {
+                        await _infoAdminStudioService.DeleteAgeLimit(existingGroup.IdAgeLimit);
+                    }
+                }
+
+                //новые группы и расписание
+                foreach (var groupVm in groups)
+                {
+                    //проверка/создание AgeLimit
+                    var ageLimit = _adminStudioService.FindAgeLimits(groupVm.MinAge, groupVm.MaxAge);
+                    if (ageLimit == null)
+                    {
+                        ageLimit = new AgeLimit
+                        {
+                            MinAge = groupVm.MinAge,
+                            MaxAge = groupVm.MaxAge,
+                            Name = GenerateAgeLimitName(groupVm.MinAge, groupVm.MaxAge)
+                        };
+                        await _adminStudioService.SaveAgeLimit(ageLimit);
+                    }
+
+                    //группа
+                    var group = new DanceGroup
+                    {
+                        Name = groupVm.Name,
+                        IdStyle = groupVm.StyleId,
+                        IdStudio = idStudio,
+                        IdAgeLimit = ageLimit.IdAgeLimit,
+                        Description = groupVm.Description,
+                    };
+
+                    await _adminStudioService.SaveGroup(group);
+
+                    //расписание
+                    foreach (var scheduleVm in groupVm.Schedule)
+                    {
+                        var schedule = new Schedule
+                        {
+                            IdGroup = group.IdGroup,
+                            IdDay = scheduleVm.DayOfWeekId,
+                            BeginTime = scheduleVm.BeginTime,
+                            EndTime = scheduleVm.EndTime
+                        };
+                        await _adminStudioService.SaveSchedule(schedule);
+                    }
+                }
+
+                return RedirectToAction("Index", "InfoAdminStudio", new { adminId = idAdmin });
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Произошла ошибка при обновлении расписания: {ex.Message}");
+                return View(viewModel);
+            }
+        }
+
+        private string GenerateAgeLimitName(int? min, int? max)
+        {
+            if (min == null && max == null)
+                return "Для всех возрастов";
+            if (min != null && max == null)
+                return $"{min}+";
+            if (min != null && max != null)
+                return $"{min}-{max}";
+            return $"До {max}";
+        }
+
     }
 }
