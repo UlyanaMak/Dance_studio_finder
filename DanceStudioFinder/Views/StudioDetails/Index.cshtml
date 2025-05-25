@@ -104,10 +104,16 @@
 
         var weekDays = Model.WeekDays.OrderBy(d => d.IdDay).ToList(); //извлечение дней недели из БД
     }
-    <h3 class="field-label mb-4">Расписание групповых занятий</h3>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 style="margin: 0;">Расписание групповых занятий</h3>
+        <div style="display: flex">
+            <input type="button" class="export-button" onclick="location.href ='@Url.Action("ExportToWord", "StudioDetails", new { id = Model.Studio.IdStudio })'" value="Загрузить в формате Word" />
+        </div>
+    </div>
 
     <div class="table-responsive">
-        <table class="table table-bordered text-center align-middle schedule-table" style="margin-top: 10px;">
+        <table class="table table-bordered text-center align-middle schedule-table">
             <thead class="table-primary">
                 <tr>
                     <th class="time-column">Время</th>

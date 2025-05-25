@@ -117,25 +117,25 @@
             group.id = `groupRow${index}`;
 
             group.innerHTML = `
-                <button type="button" class="btn-close position-absolute top-0 end-0 m-2"
-                        onclick="removeGroup(${index})" aria-label="Закрыть"></button>
+                        <button type="button" class="btn-close position-absolute top-0 end-0 m-2"
+                                onclick="removeGroup(${index})" aria-label="Закрыть"></button>
 
-                <div class="form-floating mb-3 validation" style="margin-top: 15px;">
-                    <input name="Groups[${index}].Name"
-                           class="form-control"
-                           style="border: 1px solid #F7C9D4;"
-                           placeholder="Название группы"
-                           data-val="true"
-                           data-val-required="Название группы - обязательное поле для ввода"
-                           data-val-length="Название группы должно быть не более 150 символов"
-                           data-val-length-max="150"/>
-                    <label style="color: #BABABA;">Название группы</label>
-                    <span class="text-danger field-validation-valid"
-                          data-valmsg-for="Groups[${index}].Name"
-                          data-valmsg-replace="true"></span>
-                </div>
+                        <div class="form-floating mb-3 validation" style="margin-top: 15px;">
+                            <input name="Groups[${index}].Name"
+                                   class="form-control"
+                                   style="border: 1px solid #F7C9D4;"
+                                   placeholder="Название группы"
+                                   data-val="true"
+                                   data-val-required="Название группы - обязательное поле для ввода"
+                                   data-val-length="Название группы должно быть не более 150 символов"
+                                   data-val-length-max="150"/>
+                            <label style="color: #BABABA;">Название группы</label>
+                            <span class="text-danger field-validation-valid"
+                                  data-valmsg-for="Groups[${index}].Name"
+                                  data-valmsg-replace="true"></span>
+                        </div>
 
-                <label>Направление</label>
+                        <label>Направление</label>
                         <select name="Groups[${index}].StyleId" class="form-select mb-3"
                                 style="border: 1px solid #F7C9D4; height: 50px;" required>
                             ${generateStyleOptions()}
@@ -168,7 +168,7 @@
                         <div class="schedule-container mb-3"></div>
                         <button type="button" class="btn btn-outline-secondary"
                                 onclick="addDayField(this, ${index})">+ Добавить день</button>
-            `;
+                    `;
 
             container.appendChild(group);
 
@@ -223,9 +223,13 @@
                         }
                         if (input.name.includes('.BeginTime')) {
                             input.name = `Groups[${newIndex}].Schedule[${i}].BeginTime`;
+                            input.setAttribute("data-val", "true");
+                            input.setAttribute("data-val-required", "Время начала - обязательное поле для ввода");
                         }
                         if (input.name.includes('.EndTime')) {
                             input.name = `Groups[${newIndex}].Schedule[${i}].EndTime`;
+                            input.setAttribute("data-val", "true");
+                            input.setAttribute("data-val-required", "Время окончания - обязательное поле для ввода");
                         }
                     });
                 }
@@ -256,9 +260,7 @@
         function generateStyleOptions() {
             const styles = @Html.Raw(Json.Serialize(Model.Styles));
             return styles.map(s =>
-                `<option value="${s.idStyle}">
-                            ${s.nameEng ?? ''}${s.nameEng && s.nameRus ? ' (' : ''}${s.nameRus ?? ''}${s.nameEng && s.nameRus ? ')' : ''}
-                        </option>`
+                `<option value="${s.idStyle}">${s.nameEng ?? ''}${s.nameEng && s.nameRus ? ' (' : ''}${s.nameRus ?? ''}${s.nameEng && s.nameRus ? ')' : ''}</option>`
             ).join('');
         }
 
@@ -269,20 +271,29 @@
             const row = document.createElement("div");
             row.className = "d-flex align-items-center mb-2";
             row.innerHTML = `
-                <select name="Groups[${groupIdx}].Schedule[${newIndex}].DayOfWeekId"
-                        class="form-select me-2" style="width: 25%; border: 1px solid #F7C9D4;" required>
-                    ${generateWeekDayOptions()}
-                </select>
+                        <select name="Groups[${groupIdx}].Schedule[${newIndex}].DayOfWeekId"
+                                class="form-select me-2" style="width: 25%; border: 1px solid #F7C9D4;" required>
+                            ${generateWeekDayOptions()}
+                        </select>
 
-                <input name="Groups[${groupIdx}].Schedule[${newIndex}].BeginTime" type="time"
-                       class="form-control me-2" style="width: 25%; border: 1px solid #F7C9D4;" required />
-                <input name="Groups[${groupIdx}].Schedule[${newIndex}].EndTime" type="time"
-                       class="form-control me-2" style="width: 25%; border: 1px solid #F7C9D4;" required />
-                <button type="button" class="btn btn-danger"
-                        onclick="this.parentElement.remove()">Удалить</button>
-            `;
+                        <input name="Groups[${groupIdx}].Schedule[${newIndex}].BeginTime" type="time"
+                               class="form-control me-2" style="width: 25%; border: 1px solid #F7C9D4;" required
+                               data-val="true" data-val-required="Время начала - обязательное поле для ввода"/>
+
+                        <input name="Groups[${groupIdx}].Schedule[${newIndex}].EndTime" type="time"
+                               class="form-control me-2" style="width: 25%; border: 1px solid #F7C9D4;" required
+                               data-val="true" data-val-required="Время окончания - обязательное поле для ввода"/>
+
+                        <button type="button" class="btn btn-danger"
+                                onclick="this.parentElement.remove()">Удалить</button>
+                    `;
 
             container.appendChild(row);
+
+            // Перезагрузка валидации после добавления дня
+            const form = $("form");
+            form.removeData("validator").removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
         }
 
         function generateWeekDayOptions() {
@@ -322,6 +333,5 @@
                 });
             });
         }
-
     </script>
 }

@@ -61,11 +61,20 @@ namespace DanceStudioFinder.Controllers
 
             //применением фильтров
             danceStudios = ApplyFilters(danceStudios, filter);
+
+            var styles = _context.Styles.OrderBy(s => s.IdStyle).ToList();  //стили
+
+            var studioFilterModel = new StudioFilterModel  //представление
+            {
+                Styles = styles,
+                Style = filter.Style
+            };
+
             //отфильтрованная модель для представления
             var filteredViewModel = new UserViewModel
             {
                 DanceStudios = danceStudios.ToList(),
-                StudioFilter = filter
+                StudioFilter = studioFilterModel
             };
 
             if (!filteredViewModel.DanceStudios.Any())
@@ -107,10 +116,9 @@ namespace DanceStudioFinder.Controllers
             }
 
             //фильтрация по стилю - для каждой группы танцев
-            if (!string.IsNullOrWhiteSpace(filter.Style))
+            if (filter.Style != null && filter.Style.IdStyle != 0)
             {
-                var styleId = int.Parse(filter.Style);
-                query = query.Where(s => s.DanceGroups.Any(g => g.IdStyle == styleId));  
+                query = query.Where(s => s.DanceGroups.Any(g => g.IdStyle == filter.Style.IdStyle));
             }
 
             //фильтрация по цене (максимальная доступная для пользователя цена)
@@ -119,17 +127,27 @@ namespace DanceStudioFinder.Controllers
                 query = query.Where(s => s.Prices.Any() && s.Prices.Max(p => p.Price1) <= filter.MaxPrice.Value);
             }
 
+            if (filter.BeginTime.HasValue && filter.EndTime.HasValue)
+            {
+                query = query.Where(s => s.DanceGroups.Any(g =>
+                    g.Schedules.Any(sc =>
+                        sc.BeginTime == filter.BeginTime.Value &&
+                        sc.EndTime == filter.EndTime.Value
+                    )
+                ));
+            }
+
             //фильтрация по времени занятий
             if (filter.BeginTime.HasValue)  //начало
             {
                 query = query.Where(s => s.DanceGroups.Any(g =>
-                    g.Schedules.Any(sc => sc.BeginTime >= filter.BeginTime.Value)));
+                    g.Schedules.Any(sc => sc.BeginTime == filter.BeginTime.Value)));
             }
 
             if (filter.EndTime.HasValue)  //окончание
             {
                 query = query.Where(s => s.DanceGroups.Any(g =>
-                    g.Schedules.Any(sc => sc.EndTime <= filter.EndTime.Value)));
+                    g.Schedules.Any(sc => sc.EndTime == filter.EndTime.Value)));
             }
 
             //фильтрация по возрасту

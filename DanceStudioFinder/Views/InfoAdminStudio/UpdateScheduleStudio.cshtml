@@ -185,60 +185,65 @@
             group.id = `groupRow${index}`;
 
             group.innerHTML = `
-                        <button type="button" class="btn-close position-absolute top-0 end-0 m-2"
-                                onclick="removeGroup(this)" aria-label="Закрыть"></button>
+                                <button type="button" class="btn-close position-absolute top-0 end-0 m-2"
+                                        onclick="removeGroup(${index})" aria-label="Закрыть"></button>
 
-                         <div class="form-floating mb-3 validation" style="margin-top: 15px;">
-                            <input name="Groups[${index}].Name"
-                                   class="form-control"
-                                   style="border: 1px solid #F7C9D4;"
-                                   data-val="true"
-                                   data-val-required="Название группы - обязательное поле для ввода"
-                                   data-val-length="Название группы должно быть не более 150 символов"
-                                   data-val-length-max="150"/>
-                            <label style="color: #BABABA;">Название группы</label>
-                            <span class="text-danger field-validation-valid"
-                                  data-valmsg-for="Groups[${index}].Name"
-                                  data-valmsg-replace="true"></span>
-                        </div>
-
-                        <label>Направление</label>
-                        <select name="Groups[${index}].StyleId" class="form-select mb-3"
-                                style="border: 1px solid #F7C9D4;" required>
-                            ${generateStyleOptions()}
-                        </select>
-
-                        <label>Возрастное ограничение</label>
-                        <div class="row mb-3">
-                            <div class="col">
-                                <div class="form-floating">
-                                    <input name="Groups[${index}].MinAge" type="number"
-                                           class="form-control" style="border: 1px solid #F7C9D4;"/>
-                                    <label style="color: #BABABA;">От</label>
+                                <div class="form-floating mb-3 validation" style="margin-top: 15px;">
+                                    <input name="Groups[${index}].Name"
+                                           class="form-control"
+                                           style="border: 1px solid #F7C9D4;"
+                                           placeholder="Название группы"
+                                           data-val="true"
+                                           data-val-required="Название группы - обязательное поле для ввода"
+                                           data-val-length="Название группы должно быть не более 150 символов"
+                                           data-val-length-max="150"/>
+                                    <label style="color: #BABABA;">Название группы</label>
+                                    <span class="text-danger field-validation-valid"
+                                          data-valmsg-for="Groups[${index}].Name"
+                                          data-valmsg-replace="true"></span>
                                 </div>
-                            </div>
-                            <div class="col">
-                                <div class="form-floating">
-                                    <input name="Groups[${index}].MaxAge" type="number"
-                                           class="form-control" style="border: 1px solid #F7C9D4;"/>
-                                    <label style="color: #BABABA;">До</label>
+
+                                <label>Направление</label>
+                                <select name="Groups[${index}].StyleId" class="form-select mb-3"
+                                        style="border: 1px solid #F7C9D4; height: 50px;" required>
+                                    ${generateStyleOptions()}
+                                </select>
+
+                                <label>Возрастное ограничение</label>
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <div class="form-floating">
+                                            <input name="Groups[${index}].MinAge" type="number"
+                                                   class="form-control" style="border: 1px solid #F7C9D4;" placeholder="От" />
+                                            <label style="color: #BABABA;">От</label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-floating">
+                                            <input name="Groups[${index}].MaxAge" type="number"
+                                                   class="form-control" style="border: 1px solid #F7C9D4;" placeholder="До" />
+                                            <label style="color: #BABABA;">До</label>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        <div class="form-floating mb-3">
-                            <textarea name="Groups[${index}].Description" class="form-control"
-                                      style="height: 100px; border: 1px solid #F7C9D4;"></textarea>
-                            <label style="color: #BABABA;">Описание</label>
-                        </div>
+                                <div class="form-floating mb-3">
+                                    <textarea name="Groups[${index}].Description" class="form-control"
+                                              style="height: 100px; border: 1px solid #F7C9D4;"></textarea>
+                                    <label style="color: #BABABA;">Описание</label>
+                                </div>
 
-                        <div class="schedule-container mb-3"></div>
-                        <button type="button" class="btn btn-outline-secondary"
-                                onclick="addDayField(this, ${index})">+ Добавить день</button>
-                    `;
+                                <div class="schedule-container mb-3"></div>
+                                <button type="button" class="btn btn-outline-secondary"
+                                        onclick="addDayField(this, ${index})">+ Добавить день</button>
+                            `;
 
             container.appendChild(group);
-            $.validator.unobtrusive.parse(container);
+
+            // Правильная инициализация валидации
+            const form = $("form");
+            form.removeData("validator").removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
         }
 
         function removeGroup(button) {

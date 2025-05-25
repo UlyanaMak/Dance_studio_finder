@@ -18,7 +18,7 @@ public partial class Price
     public int IdStudio { get; set; }
 
     [Column("price")]
-    [Range(0, 10000, ErrorMessage = "Стоимость занятия должна быть от 0 - бесплатно - до 10 000 рублей")]
+    [Range(0, 100000, ErrorMessage = "Стоимость занятия должна быть от 0 - бесплатно - до 100 000 рублей")]
     [Required(ErrorMessage = "Цена - поле обязательное для заполнения")]
     public int Price1 { get; set; }
 

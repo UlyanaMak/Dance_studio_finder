@@ -32,11 +32,22 @@
     <span asp-validation-for="Street" class="text-danger"></span>
 </div>
 
-<select name="Style" style="border: 1px solid #C8DE9D;" class="form-select mb-3">
+@* <select name="Style" style="border: 1px solid #C8DE9D;" class="form-select mb-3">
     <option value="">Танцевальное направление не указано</option> <!-- Пустой выбор -->
     @foreach (var style in Model.Styles)
     {
         <option value="@style.IdStyle">
+            @(style.NameEng != null && style.NameRus != null ? $"{style.NameEng} ({style.NameRus})" : style.NameEng ?? style.NameRus)
+        </option>
+    }
+</select> *@
+
+<select name="Style.IdStyle" style="border: 1px solid #C8DE9D;" class="form-select mb-3">
+    <option value="">Танцевальное направление не указано</option>
+    @foreach (var style in Model.Styles)
+    {
+        <option value="@style.IdStyle"
+                selected="@(Model.Style != null && Model.Style.IdStyle == style.IdStyle)">
             @(style.NameEng != null && style.NameRus != null ? $"{style.NameEng} ({style.NameRus})" : style.NameEng ?? style.NameRus)
         </option>
     }

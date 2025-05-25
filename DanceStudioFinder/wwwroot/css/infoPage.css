@@ -106,3 +106,19 @@
 .table-responsive {
     overflow-x: auto;
 }
+
+.export-button {
+    /*font-size: 20px;*/
+    display: inline-block;
+    padding: 5px 5px;
+    background-color: #F2FCC6;
+    border: 2px solid;
+    border-color: #C8DE9D;
+    color: black;
+    text-decoration: none;
+    border-radius: 0px;
+    cursor: pointer;
+    font-family: "Times New Roman",sans-serif;
+    font-size: 17px;
+    text-align: center;
+}

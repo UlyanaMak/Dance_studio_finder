@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="DanceStudioFinder.Models.Address">
+    <Position X="9.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAgAAAAAAQAAAAAAAwAAgAAAAAAoAAAAAAAA=</HashCode>
+      <FileName>Models\Address.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.Models.Price">
+    <Position X="9.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACEAAAAAAQAgAAAAAAAAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Price.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.Models.Admin">
+    <Position X="7.5" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAQAAAAAQABAAEAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Admin.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.Models.DanceStudio">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAUAAgAgAQAAgAAAAAAAQAQACgAkAAAAAAAAACAAAAA=</HashCode>
+      <FileName>Models\DanceStudio.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.Models.Style">
+    <Position X="5.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAAAAAAAIAgAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Style.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.Models.DanceGroup">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACEAAAAAAAAgEABgAEAAAAQIAEAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\DanceGroup.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.Models.Schedule">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIQAAgEABAAAAAAAAAAABgAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Models\Schedule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.Models.WeekDay">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAEAAAIAAAAAAAAAAAAg=</HashCode>
+      <FileName>Models\WeekDay.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.Models.AgeLimit">
+    <Position X="4" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAQAAAQQAAgAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\AgeLimit.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.Controllers.AdminStudioController">
+    <Position X="13" Y="1.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAQACABAABAAAACAAEBAAAAAAA=</HashCode>
+      <FileName>Controllers\AdminStudioController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.Controllers.HomeController">
+    <Position X="16" Y="1.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAAAAAABAAAAAAAQAAAAAABAAAAAAEQAAAAAAA=</HashCode>
+      <FileName>Controllers\HomeController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.Controllers.InfoAdminStudioController">
+    <Position X="18.25" Y="1.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>ABAAAEEAAAAABAAAAAARACABCEAEAAAAAAEEAAAAAAA=</HashCode>
+      <FileName>Controllers\InfoAdminStudioController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.Controllers.StudioDetailsController">
+    <Position X="16" Y="4.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\StudioDetailsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.Models.LoginViewModel">
+    <Position X="11" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>Models\LoginViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.Models.RegisterViewModel">
+    <Position X="12.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAAAAEAAAAAAAAAAAAAAAAEASAAEAAAAA=</HashCode>
+      <FileName>Models\RegisterViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.Models.UserViewModel">
+    <Position X="14.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAUAAAAAAAAAABAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>Models\UserViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.ViewModels.AdminStudioDetailsViewModel">
+    <Position X="12.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAEAAAQAAAAAAAAAAAQAAAAAAAAAABAQAAAAAAAA=</HashCode>
+      <FileName>ViewModels\AdminStudioDetailsViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.ViewModels.AdminDanceGroupViewModel">
+    <Position X="14.5" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgEAAAEAAAAAQAAEAAAAAABAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\AdminStudioDetailsViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.ViewModels.AdminScheduleDisplayModel">
+    <Position X="14.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAYAAAAAAAAAAAAAAAAABgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\AdminStudioDetailsViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.ViewModels.CreateAddressStudioViewModel">
+    <Position X="11" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAQAAAAQAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\CreateAddressStudioViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.ViewModels.CreatePricesStudioViewModel">
+    <Position X="11" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAAAQAAAAQAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\CreatePricesStudioViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.ViewModels.CreateScheduleStudioViewModel">
+    <Position X="16.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAEAAAAAAAAAAQAAAAQAAAAAAAAAABAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\CreateScheduleStudioViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.ViewModels.GroupViewModel">
+    <Position X="16.25" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAgAAAAAQAAAQQAAEAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\CreateScheduleStudioViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.ViewModels.ScheduleViewModel">
+    <Position X="16.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAAAAAAAAAAAgAAAAAIAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\CreateScheduleStudioViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.ViewModels.StudioDetailsViewModel">
+    <Position X="18" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAEAAAQAAAAAAAAAAAAAAAAAAAAAABAQAAAAAAAA=</HashCode>
+      <FileName>ViewModels\StudioDetailsViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.ViewModels.DanceGroupViewModel">
+    <Position X="18" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgEAAAEAAAAAQAAEAAAAAABAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\StudioDetailsViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DanceStudioFinder.ViewModels.ScheduleDisplayModel">
+    <Position X="19.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAYAAAAAAAAAAAAAAAAABgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\StudioDetailsViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

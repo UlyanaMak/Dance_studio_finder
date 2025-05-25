@@ -17,7 +17,7 @@
 
 @section HeaderButtons {
     <button type="button" id="buttonToContinue" class="main-button">
-        Далее
+        Сохранить и продолжить
     </button>
     <input class="main-button" type="submit" onclick="location.href ='@Url.Action("Index", "InfoAdminStudio", new {adminId = Model.Admin.IdAdmin})'" value="Завершить" />
 }
@@ -110,15 +110,15 @@
                                 <input name="Prices[${newIndex}].Price1"
                                        type="number"
                                        min="0"
-                                       max="10000"
+                                       max="100000"
                                        style="border: 1px solid #F7C9D4;"
                                        class="form-control price-input"
                                        placeholder="Цена"
                                        data-val="true"
                                        data-val-required="Цена - обязательное поле"
-                                       data-val-range="Цена должна быть от 0 до 10000"
+                                       data-val-range="Цена должна быть от 0 до 100000"
                                        data-val-range-min="0"
-                                       data-val-range-max="10000"
+                                       data-val-range-max="100000"
                                        data-val-number="Поле должно содержать числовое значение" />
                                 <label style="color: #BABABA;">Цена</label>
                                 <span class="text-danger field-validation-valid"

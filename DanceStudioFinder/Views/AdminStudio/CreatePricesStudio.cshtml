@@ -89,16 +89,14 @@
                     <div class="form-floating mb-3 validation">
                         <input name="Prices[${newIndex}].Price1"
                                type="number"
-                               min="0"
-                               max="10000"
                                style="border: 1px solid #F7C9D4;"
                                class="form-control price-input"
                                placeholder="Цена"
                                data-val="true"
                                data-val-required="Цена - поле обязательное для заполнения"
-                               data-val-range="Стоимость занятия должна быть от 0 - бесплатно - до 10 000 рублей"
+                               data-val-range="Стоимость занятия должна быть от 0 - бесплатно - до 100 000 рублей"
                                data-val-range-min="0"
-                               data-val-range-max="10000"
+                               data-val-range-max="100000"
                                data-val-number="Поле должно содержать числовое значение">
                         <label style="color: #BABABA;">Цена</label>
                         <span class="text-danger field-validation-valid"
@@ -124,12 +122,17 @@
                     </div>
                 </div>
                 <div class="col-2 d-flex align-items-center">
-                    <button type="button" class="btn btn-danger btn-sm"
-                            onclick="removePriceField('priceRow${newIndex}')">
+                    <button type="button" class="btn btn-danger btn-sm remove-price-btn">
                         Удалить
                     </button>
                 </div>
             `;
+
+            // Назначаем обработчик кнопке "Удалить"
+            row.querySelector(".remove-price-btn").addEventListener("click", function () {
+                row.remove();
+                reindexPriceFields();
+            });
 
             container.appendChild(row);
 
@@ -138,6 +141,7 @@
             form.removeData("validator").removeData("unobtrusiveValidation");
             $.validator.unobtrusive.parse(form);
         }
+
 
         function removePriceField(rowId) {
             const row = document.getElementById(rowId);

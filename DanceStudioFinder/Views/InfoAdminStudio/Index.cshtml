@@ -1,6 +1,6 @@
 ﻿@model DanceStudioFinder.ViewModels.AdminStudioDetailsViewModel
 @{
-    ViewData["Title"] = "Добавление цен студии";
+    ViewData["Title"] = "Данные студии";
 }
 <head>
     <meta charset="utf-8" />
@@ -28,12 +28,39 @@
     <button type="button" id="buttonToUpdate" class="main-button" onclick="location.href ='@Url.Action("UpdateStudio", "InfoAdminStudio", new { adminId = Model.Admin.IdAdmin })'">
         Редактировать данные студии
     </button>
-    <button type="button" id="buttonToDelete" class="main-button" onclick="location.href ='@Url.Action("DeleteStudio", "InfoAdminStudio", new { adminId = Model.Admin.IdAdmin })'">
+    <button type="button" id="buttonToDelete" class="main-button" data-bs-toggle="modal" data-bs-target="#deleteStudioModal">
         Удалить студию
     </button>
     <!--Выход на главную страницу-->
     <input class="main-button" type="submit" onclick="location.href ='@Url.Action("Index", "Home")'" value="Выйти" />
 }
+
+<!-- Модальное окно подтверждения удаления студии -->
+<div class="modal fade" id="deleteStudioModal" tabindex="-1" aria-labelledby="deleteStudioLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <form asp-action="DeleteStudio" asp-controller="InfoAdminStudio">
+                <input type="hidden" asp-for="Admin.IdAdmin" />  <!--Скрытое поле для сохраненя id админа-->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editAdminLabel">Подтверждение удаления студии</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text" style="color: black">Удаление данных танцевальной студии из системы приводит к удалению всех данных студии, закрепленной за администратором</p>
+                    <br />
+                    <p class="text" style="color: black">Все данные о танцевальной студии можно будет заполнить заново после удаления</p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary enter-registration-button" onclick="location.href ='@Url.Action("DeleteStudio", "InfoAdminStudio", new { adminId = Model.Admin.IdAdmin })'">Удалить</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
 
 <!-- Модальное окно редактирования администратора -->
 <div class="modal fade" id="editAdminModal" tabindex="-1" aria-labelledby="editAdminLabel" aria-hidden="true">
@@ -193,10 +220,17 @@
 
         var weekDays = Model.WeekDays.OrderBy(d => d.IdDay).ToList(); //извлечение дней недели из БД
     }
-    <h3 class="field-label mb-4">Расписание групповых занятий</h3>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 class="field-label" style="margin: 0;">Расписание групповых занятий</h3>
+        <div style="display: flex;">
+            <input type="button" class="export-button" onclick="location.href='@Url.Action("ExportToWord", "StudioDetails", new { id = Model.Studio.IdStudio })'" value="Загрузить в формате Word" />
+        </div>
+    </div>
+
 
     <div class="table-responsive">
-        <table class="table table-bordered text-center align-middle schedule-table" style="margin-top: 10px;">
+        <table class="table table-bordered text-center align-middle schedule-table">
             <thead class="table-primary">
                 <tr>
                     <th class="time-column" style="
